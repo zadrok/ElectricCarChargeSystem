@@ -35,3 +35,7 @@ bin
 *.log
 *.swp
 *.bak
+
+# Jade
+APDescription.txt
+MTPs-Main-Container.txt
