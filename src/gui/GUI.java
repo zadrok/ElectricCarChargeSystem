@@ -6,6 +6,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import jade.wrapper.gateway.JadeGateway;
+import model.*;
+
 public class GUI 
 {
 	private JFrame frame;
@@ -16,8 +19,12 @@ public class GUI
 	
 	private MenuBar menuBar;
 	
-	public GUI()
+	private ChargerSystem chargeSys;
+	
+	public GUI( ChargerSystem aChargeSystem )
 	{
+		chargeSys = aChargeSystem;
+		
 		windowTitle = "Electric Car Charge System";
 		windowWidth = 1280;
 		windowHegiht = 720;
@@ -53,7 +60,13 @@ public class GUI
 	public void exit()
 	{
 		frame.dispose();
+		JadeGateway.shutdown();
 		System.exit(0);
+	}
+	
+	public ChargerSystem getChargerSystem()
+	{
+		return chargeSys;
 	}
 	
 }

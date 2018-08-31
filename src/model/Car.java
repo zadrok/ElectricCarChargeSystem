@@ -1,6 +1,9 @@
 package model;
 
-public class Car 
+import jade.core.Agent;
+
+@SuppressWarnings("serial")
+public class Car extends Agent
 {
 	private long id;
 	private long maxChargeCapacity;
@@ -13,11 +16,15 @@ public class Car
 		currentCharge = 0;
 	}
 	
-	public Car( long aID, long aMaxchargeCapacity, long aCurrentcharge )
+	protected void setup()
 	{
-		id = aID;
-		maxChargeCapacity = aMaxchargeCapacity;
-		currentCharge = aCurrentcharge;
+		Object[] args = getArguments();
+		
+		id = (long)args[0];
+		maxChargeCapacity = (long)args[1];
+		currentCharge = (long)args[2];
+		
+		addBehaviour( new CarBehaviourBasic( this, 4 ) );
 	}
 	
 	public long getID()

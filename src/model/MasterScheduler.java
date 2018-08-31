@@ -1,39 +1,20 @@
 package model;
 
-public class MasterScheduler
+import jade.core.Agent;
+
+public class MasterScheduler extends Agent
 {
-	private long outlets;
-	private long chargeInterval; // in minutes
+	
 	
 	public MasterScheduler()
 	{
-		outlets = 50;
-		chargeInterval = 30;
+		
 	}
 	
-	public MasterScheduler( long aNumOutlets, long aChargeInterval )
+	protected void setup()
 	{
-		outlets = aNumOutlets;
-		chargeInterval = aChargeInterval;
-	}
-	
-	public long getOutlets()
-	{
-		return outlets;
-	}
-	
-	public void setOutlets( long aNumOutlets )
-	{
-		outlets = aNumOutlets;
-	}
-	
-	public long getChargeInterval()
-	{
-		return chargeInterval;
-	}
-	
-	public void setChargeInterval( long aChargeInterval )
-	{
-		chargeInterval = aChargeInterval;
+		Object[] args = getArguments();
+		
+		addBehaviour( new MasterSchedulerBehaviourBasic( this, 4 ) );
 	}
 }

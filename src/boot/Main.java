@@ -1,14 +1,23 @@
 package boot;
 
 import gui.GUI;
+import model.ChargerSystem;
 
 public class Main 
 {
 
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
+		GlobalVariables.importSettings();
+		
 		jade.Boot.main(new String[] {"-gui"}); //start jade
-		GUI gui = new GUI();
+		ChargerSystem charSys = new ChargerSystem();
+		charSys.initJadeAgents();
+		GUI gui = new GUI( charSys );
+		
 	}
 
 }
+
+
+
