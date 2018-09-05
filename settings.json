@@ -1,4 +1,5 @@
 {
 	"outlets": 50,
-	"chargeInterval": 30
+	"chargeInterval": 30,
+	"draw": true
 }

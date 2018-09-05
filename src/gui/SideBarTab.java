@@ -13,4 +13,24 @@ public class SideBarTab extends JPanel
 		setLayout(null);
 		setBounds(0, 0, sideBar.getWidth(), sideBar.getHeight());
 	}
+	
+	protected void init()
+	{
+				
+	}
+
+	public void commit()
+	{
+		
+	}
+
+	public void refresh()
+	{
+		
+	}
+	
+	public GUI getGUI()
+	{
+		return sideBar.getGUI();
+	}
 }
