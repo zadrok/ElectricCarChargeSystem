@@ -11,6 +11,7 @@ public class GlobalVariables
 {
 	public static long outlets;
 	public static long chargeInterval; // in minutes
+	public static boolean draw;
 	
 	
 	// add variavles here to get information from settings file
@@ -18,6 +19,7 @@ public class GlobalVariables
 	{
 		outlets = obj.get("outlets").getAsLong();
 		chargeInterval = obj.get("chargeInterval").getAsLong();
+		draw = obj.get("draw").getAsBoolean();
 	}
 	
 	

@@ -1,13 +1,13 @@
 package boot;
 
-import gui.GUI;
-import model.ChargerSystem;
+import gui.*;
+import model.*;
 
 public class Main 
 {
 
 	public static void main(String[] args)
-	{
+	{	
 		GlobalVariables.importSettings();
 		
 		jade.Boot.main(new String[] {"-gui"}); //start jade

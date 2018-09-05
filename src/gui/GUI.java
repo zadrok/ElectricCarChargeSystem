@@ -21,6 +21,9 @@ public class GUI
 	
 	private ChargerSystem chargeSys;
 	
+	private Canvas canvas;
+	private SideBar sideBar;
+	
 	public GUI( ChargerSystem aChargeSystem )
 	{
 		chargeSys = aChargeSystem;
@@ -40,6 +43,16 @@ public class GUI
 		menuBar = new MenuBar(this);
 		frame.add( menuBar );
 		frame.setJMenuBar(menuBar);
+		
+		
+		int sideBarWidth = windowWidth/3;
+		sideBar = new SideBar( this, 0, 0, sideBarWidth, windowHegiht );
+		canvas = new Canvas( this, sideBarWidth, 0, windowWidth-sideBarWidth, windowHegiht );
+		
+		
+		frame.add( sideBar );
+		frame.add( canvas );
+		
 		
 		frame.setLayout(null);
 		frame.setVisible(true);
