@@ -83,8 +83,6 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 				try {
 					Thread.sleep(chargePeriod);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 					return;
 				}
 				// Increment car charge
