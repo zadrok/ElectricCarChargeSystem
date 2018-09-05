@@ -2,11 +2,15 @@ package model;
 
 import java.util.ArrayList;
 
+import jade.core.AID;
 import jade.core.Profile;
 import jade.core.Runtime;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import jade.wrapper.gateway.JadeGateway;
 
 public class ChargerSystem 
 {
@@ -17,6 +21,9 @@ public class ChargerSystem
 	private Profile profileMasterScheduler;
 	private ContainerController containerMasterScheduler;
 	
+	private ArrayList<String> carAgentNames;
+	private String masterSchedulerName;
+	
 	public ChargerSystem()
 	{
 		
@@ -24,6 +31,8 @@ public class ChargerSystem
 	
 	public void initJadeAgents()
 	{
+		carAgentNames = new ArrayList<>();
+		
 		runtime = Runtime.instance();
 		
 		profileMasterScheduler = new jade.core.ProfileImpl();
@@ -42,6 +51,9 @@ public class ChargerSystem
 		{
 			createCarAgent( i, 1000, 0 );
 		}
+		
+		messageAllCars(ACLMessage.INFORM, "HI CAR");
+		messageMasterScheduler(ACLMessage.INFORM, "Master Scheduler");
 	}
 	
 	public void createMasterScheduler()
@@ -50,7 +62,9 @@ public class ChargerSystem
 		{
 			ArrayList<Object> objList = new ArrayList<>();
 			
-			AgentController ac = containerMasterScheduler.createNewAgent( "Master Scheduler", "model.MasterScheduler", objList.toArray() );
+			masterSchedulerName = "Master Scheduler";
+			
+			AgentController ac = containerMasterScheduler.createNewAgent( masterSchedulerName, "model.MasterScheduler", objList.toArray() );
 			ac.start();
 		}
 		catch (StaleProxyException e)
@@ -68,13 +82,79 @@ public class ChargerSystem
 			objList.add( aMaxchargeCapacity );
 			objList.add( aCurrentcharge );
 			
-			AgentController ac = containerCars.createNewAgent( "Car" + aID, "model.Car", objList.toArray() );
+			String name = "Car " + aID;
+			
+			AgentController ac = containerCars.createNewAgent( name, "model.Car", objList.toArray() );
 			ac.start();
+			
+			carAgentNames.add( name );
 		}
 		catch (StaleProxyException e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void messageAllCars(int aMeggageType, String aMessage)
+	{
+		System.out.println("Sending message to all Cars: " + aMessage);
+		
+		try
+		{
+			OneShotBehaviour behaviour = ( new OneShotBehaviour() 
+			{
+				public void action() 
+				{
+					ACLMessage msg = new ACLMessage(aMeggageType);
+					msg.setContent(aMessage);
+					
+					for (String lName : carAgentNames)
+					{
+						msg.addReceiver(new AID(lName, AID.ISLOCALNAME));
+					}
+					
+					
+					myAgent.send(msg);
+				}
+			} );
+			
+			JadeGateway.execute(behaviour);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println("Done sending message to all Cars");
+	}
+	
+	public void messageMasterScheduler(int aMeggageType, String aMessage)
+	{
+		System.out.println("Sending message to Master Scheduler: " + aMessage);
+		
+		try
+		{
+			OneShotBehaviour behaviour = ( new OneShotBehaviour() 
+			{
+				public void action() 
+				{
+					ACLMessage msg = new ACLMessage(aMeggageType);
+					msg.setContent(aMessage);
+					
+					msg.addReceiver(new AID(masterSchedulerName, AID.ISLOCALNAME));
+					
+					myAgent.send(msg);
+				}
+			} );
+			
+			JadeGateway.execute(behaviour);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println("Done sending message to Master Scheduler");
 	}
 	
 }

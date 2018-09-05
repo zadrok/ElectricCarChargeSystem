@@ -15,6 +15,6 @@ public class MasterScheduler extends Agent
 	{
 		Object[] args = getArguments();
 		
-		addBehaviour( new MasterSchedulerBehaviourBasic( this, 4 ) );
+		addBehaviour( new MasterSchedulerBehaviourBasic( this ) );
 	}
 }

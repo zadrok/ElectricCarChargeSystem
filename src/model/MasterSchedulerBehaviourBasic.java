@@ -1,32 +1,33 @@
 package model;
 
-import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
-public class MasterSchedulerBehaviourBasic extends Behaviour
+public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 {
 	MasterScheduler masSch;
-	private int cycles;
-	private int currentCycle;
 	
-	public MasterSchedulerBehaviourBasic( MasterScheduler aMasSch, int aCycles )
+	public MasterSchedulerBehaviourBasic( MasterScheduler aMasSch )
 	{
 		masSch = aMasSch;
-		cycles = aCycles;
-		currentCycle = 0;
 	}
 
 	@Override
 	public void action() 
 	{
-		System.out.println( "MasterScheduler executing cycle " + currentCycle++ );
-		
-	}
-
-	@Override
-	public boolean done()
-	{
-		return currentCycle == cycles;
+		ACLMessage msg = masSch.receive();
+		if ( msg != null )
+		{
+			// Handle message
+			System.out.println( masSch.getLocalName() + ": Received message " + msg.getContent() + " from " + msg.getSender().getLocalName() );
+			
+			// reply
+			ACLMessage reply = msg.createReply();
+			reply.setPerformative( ACLMessage.INFORM );
+			reply.setContent( "Ping" );
+			masSch.send( reply );
+		}
 	}
 
 }

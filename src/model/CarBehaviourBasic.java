@@ -1,32 +1,33 @@
 package model;
 
-import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
-public class CarBehaviourBasic extends Behaviour
+public class CarBehaviourBasic extends CyclicBehaviour
 {
 	private Car car;
-	private int cycles;
-	private int currentCycle;
 	
-	public CarBehaviourBasic( Car aCar, int aCycles )
+	public CarBehaviourBasic( Car aCar )
 	{
 		car = aCar;
-		cycles = aCycles;
-		currentCycle = 0;
 	}
 
 	@Override
 	public void action() 
-	{
-		System.out.println( "Car " + car.getID() + " executing cycle " + currentCycle++ );
-		
-	}
-
-	@Override
-	public boolean done()
-	{
-		return currentCycle == cycles;
+	{	
+		ACLMessage msg = car.receive();
+		if ( msg != null )
+		{
+			// Handle message
+			System.out.println( car.getLocalName() + ": Received message " + msg.getContent() + " from " + msg.getSender().getLocalName() );
+			
+			// reply
+			ACLMessage reply = msg.createReply();
+			reply.setPerformative( ACLMessage.INFORM );
+			reply.setContent( "Pong" );
+			car.send( reply );
+		}
 	}
 
 }

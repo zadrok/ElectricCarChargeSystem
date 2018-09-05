@@ -27,7 +27,7 @@ public class Car extends Agent
 		maxChargeCapacity = (long)args[1];
 		currentCharge = (long)args[2];
 		
-		addBehaviour( new CarBehaviourBasic( this, 4 ) );
+		addBehaviour( new CarBehaviourBasic( this ) );
 	}
 	
 	public long getID()
