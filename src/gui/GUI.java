@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import boot.GlobalVariables;
 import jade.wrapper.gateway.JadeGateway;
 import model.*;
 
@@ -56,6 +57,24 @@ public class GUI
 		
 		frame.setLayout(null);
 		frame.setVisible(true);
+	}
+	
+	public void startDrawLoop()
+	{
+		
+		
+		while( GlobalVariables.draw )
+		{
+			refresh();
+			
+			
+		}
+	}
+	
+	private void refresh()
+	{
+		frame.validate();
+		frame.repaint();
 	}
 	
 	private WindowAdapter customWindowAdapter()

@@ -14,7 +14,7 @@ public class Main
 		ChargerSystem charSys = new ChargerSystem();
 		charSys.initJadeAgents();
 		GUI gui = new GUI( charSys );
-		
+		gui.startDrawLoop();
 	}
 
 }
