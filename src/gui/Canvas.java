@@ -44,6 +44,8 @@ public class Canvas extends JPanel
 		if ( startAngle == 360 )
 			startAngle = 0;
 		
+		g2.drawString( ""+getGUI().getChargerSystem().getCarAgents().size(), 300, 100 );
+		
     }
 	
 	public void startLooper()

@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.Runtime;
 import jade.core.behaviours.OneShotBehaviour;
@@ -21,8 +22,8 @@ public class ChargerSystem
 	private Profile profileMasterScheduler;
 	private ContainerController containerMasterScheduler;
 	
-	private ArrayList<String> carAgentNames;
-	private String masterSchedulerName;
+	private ArrayList<Car> carAgents;
+	private MasterScheduler masterSchedulerAgent;
 	
 	public ChargerSystem()
 	{
@@ -31,7 +32,7 @@ public class ChargerSystem
 	
 	public void initJadeAgents()
 	{
-		carAgentNames = new ArrayList<>();
+		carAgents = new ArrayList<>();
 		
 		runtime = Runtime.instance();
 		
@@ -60,11 +61,9 @@ public class ChargerSystem
 	{
 		try
 		{
-			ArrayList<Object> objList = new ArrayList<>();
-			
-			masterSchedulerName = "Master Scheduler";
-			
-			AgentController ac = containerMasterScheduler.createNewAgent( masterSchedulerName, "model.MasterScheduler", objList.toArray() );
+			masterSchedulerAgent = new MasterScheduler();
+			String name = "Master Scheduler";
+			AgentController ac = containerMasterScheduler.acceptNewAgent(name, masterSchedulerAgent);
 			ac.start();
 		}
 		catch (StaleProxyException e)
@@ -77,17 +76,11 @@ public class ChargerSystem
 	{
 		try
 		{
-			ArrayList<Object> objList = new ArrayList<>();
-			objList.add( aID );
-			objList.add( aMaxchargeCapacity );
-			objList.add( aCurrentcharge );
-			
+			Car car = new Car( aID, aMaxchargeCapacity, aCurrentcharge );
 			String name = "Car " + aID;
-			
-			AgentController ac = containerCars.createNewAgent( name, "model.Car", objList.toArray() );
+			carAgents.add( car );
+			AgentController ac = containerCars.acceptNewAgent( name, car );
 			ac.start();
-			
-			carAgentNames.add( name );
 		}
 		catch (StaleProxyException e)
 		{
@@ -108,9 +101,9 @@ public class ChargerSystem
 					ACLMessage msg = new ACLMessage(aMeggageType);
 					msg.setContent(aMessage);
 					
-					for (String lName : carAgentNames)
+					for (Agent lAgent : carAgents)
 					{
-						msg.addReceiver(new AID(lName, AID.ISLOCALNAME));
+						msg.addReceiver(new AID(lAgent.getName(), AID.ISLOCALNAME));
 					}
 					
 					
@@ -141,7 +134,7 @@ public class ChargerSystem
 					ACLMessage msg = new ACLMessage(aMeggageType);
 					msg.setContent(aMessage);
 					
-					msg.addReceiver(new AID(masterSchedulerName, AID.ISLOCALNAME));
+					msg.addReceiver(new AID(masterSchedulerAgent.getName(), AID.ISLOCALNAME));
 					
 					myAgent.send(msg);
 				}
@@ -155,6 +148,11 @@ public class ChargerSystem
 		}
 		
 		System.out.println("Done sending message to Master Scheduler");
+	}
+	
+	public ArrayList<Car> getCarAgents()
+	{
+		return carAgents;
 	}
 	
 }

@@ -8,13 +8,11 @@ public class MasterScheduler extends Agent
 	
 	public MasterScheduler()
 	{
-		
+		super();
 	}
 	
 	protected void setup()
 	{
-		Object[] args = getArguments();
-		
 		addBehaviour( new MasterSchedulerBehaviourBasic( this ) );
 	}
 }

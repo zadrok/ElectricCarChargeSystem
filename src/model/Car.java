@@ -14,19 +14,22 @@ public class Car extends Agent
 	
 	public Car()
 	{
+		super();
 		id = -1;
 		maxChargeCapacity = 1000;
 		currentCharge = 0;
 	}
 	
-	protected void setup()
+	public Car(long aID, long aMaxChargeCapacity, long aCurrentCharge)
 	{
-		Object[] args = getArguments();
-		
-		id = (long)args[0];
-		maxChargeCapacity = (long)args[1];
-		currentCharge = (long)args[2];
-		
+		super();
+		id = aID;
+		maxChargeCapacity = aMaxChargeCapacity;
+		currentCharge = aCurrentCharge;
+	}
+	
+	protected void setup()
+	{	
 		addBehaviour( new CarBehaviourBasic( this ) );
 	}
 	
