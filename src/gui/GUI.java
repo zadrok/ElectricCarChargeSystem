@@ -61,17 +61,10 @@ public class GUI
 	
 	public void startDrawLoop()
 	{
-		
-		
-		while( GlobalVariables.draw )
-		{
-			refresh();
-			
-			
-		}
+		canvas.startLooper();
 	}
 	
-	private void refresh()
+	public void refresh()
 	{
 		frame.validate();
 		frame.repaint();

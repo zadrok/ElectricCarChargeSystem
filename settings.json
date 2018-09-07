@@ -1,5 +1,6 @@
 {
 	"outlets": 50,
 	"chargeInterval": 30,
-	"draw": true
+	"drawLoop": true,
+	"drawFrameRate": 20
 }

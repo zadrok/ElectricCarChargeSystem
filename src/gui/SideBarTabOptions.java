@@ -11,7 +11,7 @@ public class SideBarTabOptions extends SideBarTab
 {
 	private ActionListener al;
 	
-	private JCheckBox draw;
+	private JCheckBox drawLoop;
 	
 	public SideBarTabOptions(SideBar aSideBar)
 	{
@@ -40,25 +40,25 @@ public class SideBarTabOptions extends SideBarTab
 		int height = 20;
 
 		
-		draw = new JCheckBox("draw", GlobalVariables.draw);
-		draw.setBounds(rightMargin, yOffset, width, height);
-		draw.addActionListener(al);
+		drawLoop = new JCheckBox("drawLoop", GlobalVariables.drawLoop);
+		drawLoop.setBounds(rightMargin, yOffset, width, height);
+		drawLoop.addActionListener(al);
 
 		yOffset += yOffsetIncrement;
 		// next option
 		
 		
-		add(draw);		
+		add(drawLoop);		
 	}
 
 	public void commit()
 	{
-		GlobalVariables.draw = draw.isSelected();
+		GlobalVariables.drawLoop = drawLoop.isSelected();
 	}
 
 	public void refresh()
 	{
-		draw.setSelected( GlobalVariables.draw );
+		drawLoop.setSelected( GlobalVariables.drawLoop );
 	}
 	
 }
