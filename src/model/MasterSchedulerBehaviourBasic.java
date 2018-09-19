@@ -12,22 +12,19 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 {
 	private List<ChargePoint> chargePoints;
 	private ChargeThread chargeThread;
+	private Thread chargeThreadThread;
 	MasterScheduler masSch;
 	
 	public MasterSchedulerBehaviourBasic( MasterScheduler aMasSch )
 	{
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
-		chargePoints.add(new ChargePoint(50));
-		chargeThread = new ChargeThread(chargePoints, 1000);
-		chargePoints.add(new ChargePoint(50));
-		chargeThread.run();
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
-		chargePoints.add(new ChargePoint(50));
+		ChargeThread chargeThread = new ChargeThread(chargePoints, 1000);
+		chargeThreadThread = new Thread(chargeThread);
+		chargeThread.add(new ChargePoint(50));
+		chargeThread.add(new ChargePoint(50));
+		chargeThreadThread.start();
+		chargeThread.add(new ChargePoint(50));
+		chargeThread.add(new ChargePoint(50));
 		masSch = aMasSch;
 	}
 
@@ -65,8 +62,16 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 		
 		public ChargeThread(List<ChargePoint> aChargers, int aChargePeriod)
 		{
-			chargePoints = aChargers;
+			chargePoints = Collections.synchronizedList(aChargers);
 			chargePeriod = aChargePeriod;
+		}
+		
+		public void add(ChargePoint aCharger)
+		{
+			synchronized(chargePoints)
+			{
+				chargePoints.add(aCharger);
+			}
 		}
 		
 		public void stop()
@@ -86,10 +91,15 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 					return;
 				}
 				// Increment car charge
-				for(int i = 0; i < chargePoints.size(); ++i)
+				synchronized(chargePoints)
 				{
-					System.out.println("Charging at point " + i);
-					chargePoints.get(i).performCharge();
+					System.out.println(chargePoints.size());
+
+					for(int i = 0; i < chargePoints.size(); ++i)
+					{
+						System.out.println("Charging at point " + i);
+						chargePoints.get(i).performCharge();
+					}
 				}
 			}
 		}
