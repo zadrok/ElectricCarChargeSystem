@@ -72,6 +72,12 @@ public class ChargerSystem
 		}
 	}
 	
+	public void createCarAgent( long aMaxchargeCapacity, long aCurrentcharge )
+	{
+		long id = getCarAgents().size();
+		createCarAgent(id, aMaxchargeCapacity, aCurrentcharge);
+	}
+	
 	public void createCarAgent( long aID, long aMaxchargeCapacity, long aCurrentcharge )
 	{
 		try

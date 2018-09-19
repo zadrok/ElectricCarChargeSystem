@@ -43,6 +43,14 @@ public class SideBar extends JPanel
 		
     }
 	
+	public void refresh()
+	{
+		tabOptions.refresh();
+		tabMasSch.refresh();
+		tabCar.refresh();
+		
+	}
+	
 	public GUI getGUI()
 	{
 		return gui;

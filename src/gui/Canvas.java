@@ -84,6 +84,7 @@ public class Canvas extends JPanel
 					if ( cell.containsPoint(e.getPoint()) )
 					{
 						getGUI().setSelectedCar( cell.getCar() );
+						getGUI().refreshSideBar();
 						break;
 					}
 				}
@@ -109,7 +110,38 @@ public class Canvas extends JPanel
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		
 		drawCells(g2,deltaTime);
+		
+		drawKey(g2);
     }
+	
+	private void drawKey(Graphics2D g2)
+	{
+		g2.setColor( Color.BLACK );
+
+		String outerCircle1 = "black dotted spinning outer circle = car agent is cycling (running)";
+		String outerCircle2 = "black dotted outer circle not spinning = canvas told to not update (option in options tab)";
+		String outerCircle3 = "red dotted outer circle = car agent is not cycling (stopped)";
+
+		String innerCircle1 = "green inner circle = car agent is charging";
+		String innerCircle2 = "yellow inner circle = car agent is ideling";
+		String innerCircle3 = "red inner circle = something is wrong with car agent (no state or other)";
+		
+		int x = 20;
+		int y = 500;
+		int yIncrement = 20;
+		
+		g2.drawString(outerCircle1, x, y);
+		y += yIncrement;
+		g2.drawString(outerCircle2, x, y);
+		y += yIncrement;
+		g2.drawString(outerCircle3, x, y);
+		y += yIncrement;
+		g2.drawString(innerCircle1, x, y);
+		y += yIncrement;
+		g2.drawString(innerCircle2, x, y);
+		y += yIncrement;
+		g2.drawString(innerCircle3, x, y);
+	}
 	
 	private void drawCells(Graphics2D g2, double aDeltaTime)
 	{
@@ -124,6 +156,8 @@ public class Canvas extends JPanel
 		{
 			populateCells(numAgents);
 		}
+		
+		cellColorCurrent = cellColorA;
 		
 		// draw each cell
 		for ( Cell cell : cells )

@@ -12,6 +12,8 @@ public class SideBarTabOptions extends SideBarTab
 	private ActionListener al;
 	
 	private JCheckBox drawLoop;
+	private JButton createNewCarAgent;
+	private ActionListener createNewCarAgentActionListener;
 	
 	public SideBarTabOptions(SideBar aSideBar)
 	{
@@ -26,7 +28,7 @@ public class SideBarTabOptions extends SideBarTab
 	        }
 	    };
 
-
+	    initActionListeners();
 		init();
 		refresh();
 	}
@@ -35,7 +37,7 @@ public class SideBarTabOptions extends SideBarTab
 	{
 		int yOffset = 10;
 		int yOffsetIncrement = 20;
-		int width = getWidth()-10;
+		int width = getWidth()-20;
 		int rightMargin = 10;
 		int height = 20;
 
@@ -45,10 +47,26 @@ public class SideBarTabOptions extends SideBarTab
 		drawLoop.addActionListener(al);
 
 		yOffset += yOffsetIncrement;
-		// next option
+		createNewCarAgent = new JButton( "Create New Car Agent" );
+		createNewCarAgent.setBounds(rightMargin, yOffset, width/2, height);
+		createNewCarAgent.addActionListener( createNewCarAgentActionListener );
 		
 		
-		add(drawLoop);		
+		add(drawLoop);
+		add(createNewCarAgent);
+	}
+	
+	private void initActionListeners()
+	{
+		createNewCarAgentActionListener = new ActionListener() 
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				getGUI().getChargerSystem().createCarAgent(1000, 50);
+			}
+		};
 	}
 
 	public void commit()

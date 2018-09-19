@@ -129,6 +129,11 @@ public class Car extends Agent
 		return carState;
 	}
 	
+	public String getCarStateString()
+	{
+		return getCarState().toString();
+	}
+	
 	// ChargeThread to handle charging of a car
 	public class ChargeThread implements Runnable
 	{

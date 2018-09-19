@@ -29,8 +29,13 @@ public class SideBarTab extends JPanel
 		
 	}
 	
+	public SideBar getSideBar()
+	{
+		return sideBar;
+	}
+	
 	public GUI getGUI()
 	{
-		return sideBar.getGUI();
+		return getSideBar().getGUI();
 	}
 }

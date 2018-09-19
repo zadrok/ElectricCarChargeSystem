@@ -67,6 +67,11 @@ public class GUI
 		canvas.startLooper();
 	}
 	
+	public void refreshSideBar()
+	{
+		sideBar.refresh();
+	}
+	
 	public void refresh()
 	{
 		frame.validate();
