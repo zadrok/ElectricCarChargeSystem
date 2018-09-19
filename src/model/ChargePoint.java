@@ -1,5 +1,7 @@
 package model;
 
+import model.Car.STATE;
+
 public class ChargePoint
 {
 	private Car connectedCar = null;
@@ -13,11 +15,20 @@ public class ChargePoint
 	public void AddCar(Car aToAdd)
 	{
 		connectedCar = aToAdd;
+		connectedCar.setCarState(STATE.CHARGE);
+	}
+	
+	public long GetConnectedCar()
+	{
+		if(connectedCar == null)
+			return -1;
+		return connectedCar.getID();
 	}
 	
 	public Car DisconnectCar()
 	{
 		Car lReturn = connectedCar;
+		connectedCar.setCarState(STATE.IDEL);
 		connectedCar = null;
 		return lReturn;
 	}

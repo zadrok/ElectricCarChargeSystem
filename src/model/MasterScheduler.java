@@ -4,7 +4,7 @@ import jade.core.Agent;
 
 public class MasterScheduler extends Agent
 {
-	
+	private MasterSchedulerBehaviourBasic MSBehaviour;
 	
 	public MasterScheduler()
 	{
@@ -13,6 +13,12 @@ public class MasterScheduler extends Agent
 	
 	protected void setup()
 	{
-		addBehaviour( new MasterSchedulerBehaviourBasic( this ) );
+		MSBehaviour =  new MasterSchedulerBehaviourBasic( this ) ;
+		addBehaviour(MSBehaviour);
+	}
+	
+	public MasterSchedulerBehaviourBasic getMSBehaviour()
+	{
+		return MSBehaviour;
 	}
 }

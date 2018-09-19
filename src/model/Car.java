@@ -12,6 +12,12 @@ public class Car extends Agent
 	private long id;
 	private long maxChargeCapacity;
 	private long currentCharge;
+
+	// looked at by gui
+	private STATE carState;
+	
+	// used in gui
+	private double startAngle;
 	
 	public Car()
 	{
@@ -42,7 +48,6 @@ public class Car extends Agent
 	protected void setup()
 	{	
 		addBehaviour( new CarBehaviourBasic( this ) );
-		chargeThread = new ChargeThread(10, 30, this);
 	}
 	
 	public long getID()
@@ -73,5 +78,25 @@ public class Car extends Agent
 	public void setCurrentCharge(long aCurrentcharge)
 	{
 		currentCharge = (getMaxChargeCapacity() > aCurrentcharge ? aCurrentcharge : getMaxChargeCapacity());
+	}
+	
+	public double getStartAngle()
+	{
+		return startAngle;
+	}
+	
+	public void setStartAngle(double aAngle)
+	{
+		startAngle = aAngle;
+	}
+	
+	public STATE getCarState()
+	{
+		return carState;
+	}
+	
+	public void setCarState(STATE aState)
+	{
+		carState = aState;
 	}
 }

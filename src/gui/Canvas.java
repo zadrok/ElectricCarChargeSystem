@@ -197,7 +197,7 @@ public class Canvas extends JPanel
 	
 	private void drawAgent(Graphics2D g2, double aDeltaTime, int x, int y, int w, int h, Car aCar)
 	{
-		if ( aCar.isRunning() )
+		if ( gui.getChargerSystem().isCharging() )
 		{
 			double speed = 0.05;
 			int arcAngle = 70;
