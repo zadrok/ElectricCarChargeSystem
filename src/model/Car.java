@@ -13,6 +13,7 @@ public class Car extends Agent
 	private long maxChargeCapacity;
 	private long currentCharge;
 	
+	// looked at by gui
 	private STATE carState;
 	
 	// used in gui
@@ -27,9 +28,7 @@ public class Car extends Agent
 		maxChargeCapacity = 1000;
 		currentCharge = 0;
 		
-		carState = STATE.IDEL;
-		
-		startAngle = 0;
+		initCommon();
 	}
 	
 	public Car(long aID, long aMaxChargeCapacity, long aCurrentCharge)
@@ -38,6 +37,14 @@ public class Car extends Agent
 		id = aID;
 		maxChargeCapacity = aMaxChargeCapacity;
 		currentCharge = aCurrentCharge;
+		
+		initCommon();
+	}
+	
+	private void initCommon()
+	{
+		carState = STATE.IDEL;
+		startAngle = 0;
 	}
 	
 	protected void setup()
