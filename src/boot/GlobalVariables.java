@@ -11,15 +11,17 @@ public class GlobalVariables
 {
 	public static long outlets;
 	public static long chargeInterval; // in minutes
-	public static boolean draw;
+	public static boolean drawLoop;
+	public static int drawFrameRate;
 	
 	
-	// add variavles here to get information from settings file
+	// add variables here to get information from settings file
 	private static void applySettings(JsonObject obj)
 	{
 		outlets = obj.get("outlets").getAsLong();
 		chargeInterval = obj.get("chargeInterval").getAsLong();
-		draw = obj.get("draw").getAsBoolean();
+		drawLoop = obj.get("drawLoop").getAsBoolean();
+		drawFrameRate = obj.get("drawFrameRate").getAsInt();
 	}
 	
 	

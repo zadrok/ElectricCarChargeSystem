@@ -2,30 +2,47 @@ package model;
 
 import jade.core.Agent;
 import java.lang.Thread;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("serial")
 public class Car extends Agent
 {
+	public static enum STATE { NONE, IDEL, CHARGE };
+	
 	private long id;
 	private long maxChargeCapacity;
 	private long currentCharge;
 	
 	public Car()
 	{
+		super();
 		id = -1;
 		maxChargeCapacity = 1000;
 		currentCharge = 0;
+		
+		initCommon();
+	}
+	
+	public Car(long aID, long aMaxChargeCapacity, long aCurrentCharge)
+	{
+		super();
+		id = aID;
+		maxChargeCapacity = aMaxChargeCapacity;
+		currentCharge = aCurrentCharge;
+		
+		initCommon();
+	}
+	
+	private void initCommon()
+	{
+		carState = STATE.IDEL;
+		startAngle = 0;
 	}
 	
 	protected void setup()
-	{
-		Object[] args = getArguments();
-		
-		id = (long)args[0];
-		maxChargeCapacity = (long)args[1];
-		currentCharge = (long)args[2];
-		
+	{	
 		addBehaviour( new CarBehaviourBasic( this ) );
+		chargeThread = new ChargeThread(10, 30, this);
 	}
 	
 	public long getID()

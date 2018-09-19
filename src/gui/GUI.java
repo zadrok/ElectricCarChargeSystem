@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import boot.GlobalVariables;
 import jade.wrapper.gateway.JadeGateway;
 import model.*;
 
@@ -24,6 +25,8 @@ public class GUI
 	private Canvas canvas;
 	private SideBar sideBar;
 	
+	private Car selectedCar;
+	
 	public GUI( ChargerSystem aChargeSystem )
 	{
 		chargeSys = aChargeSystem;
@@ -32,6 +35,7 @@ public class GUI
 		windowWidth = 1280;
 		windowHegiht = 720;
 		windowColor = Color.WHITE;
+		selectedCar = null;
 		
 		frame = new JFrame(windowTitle);
 		frame.setSize(windowWidth,windowHegiht);
@@ -58,6 +62,17 @@ public class GUI
 		frame.setVisible(true);
 	}
 	
+	public void startDrawLoop()
+	{
+		canvas.startLooper();
+	}
+	
+	public void refresh()
+	{
+		frame.validate();
+		frame.repaint();
+	}
+	
 	private WindowAdapter customWindowAdapter()
 	{
 		return new WindowAdapter() 
@@ -80,6 +95,16 @@ public class GUI
 	public ChargerSystem getChargerSystem()
 	{
 		return chargeSys;
+	}
+	
+	public Car getSelectedCar()
+	{
+		return selectedCar;
+	}
+	
+	public void setSelectedCar(Car aCar)
+	{
+		selectedCar = aCar;
 	}
 	
 }
