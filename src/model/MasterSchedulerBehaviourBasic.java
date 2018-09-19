@@ -29,5 +29,11 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			masSch.send( reply );
 		}
 	}
+	
+	@Override
+	public int onEnd()
+	{
+		return super.onEnd();
+	}
 
 }

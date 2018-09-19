@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -25,9 +27,20 @@ public class ChargerSystem
 	private ArrayList<Car> carAgents;
 	private MasterScheduler masterSchedulerAgent;
 	
+	private List<ChargePoint> chargePoints;
+	private ChargeThread chargeThread;
+	private Thread chargeThreadThread;
+	
 	public ChargerSystem()
 	{
-		
+		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
+		chargeThread = new ChargeThread(chargePoints, 1000);
+		chargeThreadThread = new Thread(chargeThread);
+		chargeThread.add(new ChargePoint(50));
+		chargeThread.add(new ChargePoint(50));
+		chargeThreadThread.start();
+		chargeThread.add(new ChargePoint(50));
+		chargeThread.add(new ChargePoint(50));
 	}
 	
 	public void initJadeAgents()
@@ -159,6 +172,21 @@ public class ChargerSystem
 	public ArrayList<Car> getCarAgents()
 	{
 		return carAgents;
+	}
+	
+	public MasterScheduler getMasterScheduler()
+	{
+		return masterSchedulerAgent;
+	}
+
+	public boolean isCharging()
+	{
+		return chargeThread.chargeStatus();
+	}
+	
+	public boolean isCarCharging(Car aCar)
+	{
+		return chargeThread.getCarChargeStatus(aCar);
 	}
 	
 }
