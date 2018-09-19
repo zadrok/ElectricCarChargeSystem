@@ -2,13 +2,21 @@ package model;
 
 import jade.core.Agent;
 import java.lang.Thread;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("serial")
 public class Car extends Agent
 {
+	public static enum STATE { NONE, IDEL, CHARGE };
+	
 	private long id;
 	private long maxChargeCapacity;
 	private long currentCharge;
+	
+	private STATE carState;
+	
+	// used in gui
+	private double startAngle;
 	
 	private ChargeThread chargeThread;
 	
@@ -18,6 +26,10 @@ public class Car extends Agent
 		id = -1;
 		maxChargeCapacity = 1000;
 		currentCharge = 0;
+		
+		carState = STATE.IDEL;
+		
+		startAngle = 0;
 	}
 	
 	public Car(long aID, long aMaxChargeCapacity, long aCurrentCharge)
@@ -31,6 +43,7 @@ public class Car extends Agent
 	protected void setup()
 	{	
 		addBehaviour( new CarBehaviourBasic( this ) );
+		chargeThread = new ChargeThread(10, 30, this);
 	}
 	
 	public long getID()
@@ -86,6 +99,29 @@ public class Car extends Agent
 		chargeThread = null;
 	}
 	
+	public double getStartAngle()
+	{
+		return startAngle;
+	}
+	
+	public void setStartAngle(double aAngle)
+	{
+		startAngle = aAngle;
+	}
+	
+	public boolean isRunning()
+	{
+		if ( chargeThread == null )
+			return false;
+		
+		return chargeThread.isRunning();
+	}
+	
+	public STATE getCarState()
+	{
+		return carState;
+	}
+	
 	// ChargeThread to handle charging of a car
 	public class ChargeThread implements Runnable
 	{
@@ -96,7 +132,7 @@ public class Car extends Agent
 		// Parent car
 		private Car car;
 		// Stop
-		private boolean stop = false;
+		private AtomicBoolean stop;
 		
 		public ChargeThread(long aChargeRate, long aChargePeriod, Car aCar)
 		{
@@ -104,17 +140,18 @@ public class Car extends Agent
 			chargeRate = aChargeRate;
 			chargePeriod = aChargePeriod;
 			car = aCar;
+			stop  = new AtomicBoolean( false );
 		}
 		
 		public void stop()
 		{
 			// Stop running
-			stop = true;
+			stop.set( true );
 		}
 		
 		public void run()
 		{
-			while(!stop)
+			while( !stop.get() )
 			{
 				// Sleep for given period of time
 				try {
@@ -128,5 +165,11 @@ public class Car extends Agent
 				System.out.println( "Car " + car.getID() + " has charge " + car.getCurrentCharge() );
 			}
 		}
+		
+		public boolean isRunning()
+		{
+			return !stop.get();
+		}
 	}
+	
 }
