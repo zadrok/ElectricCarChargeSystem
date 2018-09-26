@@ -33,6 +33,11 @@ public class SideBar extends JPanel
 		add( tabPane );
 	}
 	
+	public void updateSize(int x, int y, int width, int height)
+	{
+		setBounds( x,y,width,height );
+	}
+	
 	public void paintComponent(Graphics g)
     {
 		Graphics2D g2 = (Graphics2D) g;

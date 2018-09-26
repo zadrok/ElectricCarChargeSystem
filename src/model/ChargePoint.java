@@ -39,11 +39,11 @@ public class ChargePoint
 		{
 			long lTotalCharge = connectedCar.getCurrentCharge() + chargeRate;
 			connectedCar.setCurrentCharge(lTotalCharge > connectedCar.getMaxChargeCapacity() ? connectedCar.getMaxChargeCapacity() : lTotalCharge);
-			System.out.println("Charged car " + connectedCar.getID() + " to charge " + connectedCar.getCurrentCharge());
+//			System.out.println("Charged car " + connectedCar.getID() + " to charge " + connectedCar.getCurrentCharge());
 		}
 		else
 		{
-			System.out.println("No car attached to charge point");
+//			System.out.println("No car attached to charge point");
 		}
 	}
 }

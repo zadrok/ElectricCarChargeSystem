@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -60,6 +62,18 @@ public class GUI
 		
 		frame.setLayout(null);
 		frame.setVisible(true);
+		
+		frame.addComponentListener(new ComponentAdapter()
+		{
+		    public void componentResized(ComponentEvent componentEvent)
+		    {
+		    	windowHegiht = frame.getHeight();
+		    	windowWidth = frame.getWidth();
+		    	sideBar.updateSize( 0, 0, sideBarWidth, windowHegiht );
+		        canvas.updateSize( sideBarWidth, 0, windowWidth-sideBarWidth, windowHegiht );
+		    }
+		});
+		
 	}
 	
 	public void startDrawLoop()

@@ -47,6 +47,11 @@ public class Canvas extends JPanel
 		cellColorSelected = new Color(c,c,c);
 	}
 	
+	public void updateSize(int x, int y, int width, int height)
+	{
+		setBounds( x,y,width,height );
+	}
+	
 	private void initMouseListener()
 	{
 		ml = new MouseListener() {
@@ -172,7 +177,7 @@ public class Canvas extends JPanel
 			int paddingW = (int) (cell.getW()*0.1);
 			int paddingH = (int) (cell.getH()*0.1);
 			
-			drawAgent( g2, aDeltaTime, cell.getX()+paddingW, cell.getY()+paddingH, cell.getW()-(paddingW*2), cell.getH()-(paddingH*2), cell.getCar() );
+			drawAgent( g2, aDeltaTime, cell.getX()+paddingW, cell.getY()+paddingH, cell.getW()-(paddingW*2), cell.getH()-(paddingH*2), cell.getCar(), cell );
 			
 			if ( cellColorCurrent == cellColorA )
 				cellColorCurrent = cellColorB;
@@ -195,8 +200,14 @@ public class Canvas extends JPanel
 		int numColumns = (int) Math.floor( width / wantedCellWidth );
 		int numRows = (int) Math.floor( height / wantedCellWidth );
 		
-		while ( numColumns * numRows < aNumAgents )
+		int num = numColumns * numRows;
+		boolean a = num < aNumAgents;
+		
+		while ( a )
 		{
+			num = numColumns * numRows;
+			a = num < aNumAgents;
+			
 			wantedCellWidth *= cellSizeIncrement;
 			numColumns = (int) Math.floor( width / wantedCellWidth );
 			numRows = (int) Math.floor( height / wantedCellWidth );
@@ -214,7 +225,7 @@ public class Canvas extends JPanel
 			{
 				Car carAgent = getGUI().getChargerSystem().getCarAgents().get(count);
 				
-				cells.add( new Cell( x, y, w, h, carAgent ) );
+				cells.add( new Cell( x, y, w, h, carAgent, 10, wantedCellWidth/160 ) );
 				
 				x += w;
 				count++;
@@ -229,7 +240,7 @@ public class Canvas extends JPanel
 		}
 	}
 	
-	private void drawAgent(Graphics2D g2, double aDeltaTime, int x, int y, int w, int h, Car aCar)
+	private void drawAgent(Graphics2D g2, double aDeltaTime, int x, int y, int w, int h, Car aCar, Cell aCell)
 	{
 		if ( gui.getChargerSystem().isCharging() )
 		{
@@ -237,7 +248,7 @@ public class Canvas extends JPanel
 			int arcAngle = 70;
 			
 			g2.setColor( Color.BLACK );
-			g2.setStroke( new BasicStroke( 10 ) );
+			g2.setStroke( new BasicStroke( (int) ( aCell.getStrokeWidth() * aCell.getStrokeScale() ) ) );
 			
 			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle(), arcAngle);
 			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+90, arcAngle);

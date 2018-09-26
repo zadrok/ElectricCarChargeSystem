@@ -72,11 +72,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 				// Increment car charge
 				synchronized(chargePoints)
 				{
-					System.out.println(chargePoints.size());
+//					System.out.println(chargePoints.size());
 
 					for(int i = 0; i < chargePoints.size(); ++i)
 					{
-						System.out.println("Charging at point " + i);
+//						System.out.println("Charging at point " + i);
 						chargePoints.get(i).performCharge();
 					}
 				}

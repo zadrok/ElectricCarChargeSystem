@@ -12,6 +12,8 @@ public class Cell
 	private int w;
 	private int h;
 	private Car car;
+	private int strokeWidth;
+	private double strokeScale;
 	
 	public Cell()
 	{
@@ -20,15 +22,19 @@ public class Cell
 		w = 50;
 		h = 50;
 		car = null;
+		strokeWidth = 10;
+		strokeScale = 1.0;
 	}
 	
-	public Cell(int aX, int aY, int aW, int aH, Car aCar)
+	public Cell(int aX, int aY, int aW, int aH, Car aCar, int aStrokeWidth, double aStrokeScale)
 	{
 		x = aX;
 		y = aY;
 		w = aW;
 		h = aH;
 		car = aCar;
+		strokeWidth = aStrokeWidth;
+		strokeScale = aStrokeScale;
 	}
 	
 	public boolean containsPoint(Point aPoint)
@@ -84,6 +90,26 @@ public class Cell
 	public void setCar(Car aCar)
 	{
 		car = aCar;
+	}
+	
+	public int getStrokeWidth()
+	{
+		return strokeWidth;
+	}
+	
+	public void setStrokeWidth(int aStrokeWidth)
+	{
+		strokeWidth = aStrokeWidth;
+	}
+	
+	public double getStrokeScale()
+	{
+		return strokeScale;
+	}
+	
+	public void setStrokeScale(double aStrokeScale)
+	{
+		strokeScale = aStrokeScale;
 	}
 	
 }
