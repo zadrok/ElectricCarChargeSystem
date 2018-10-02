@@ -268,11 +268,17 @@ public class Canvas extends JPanel
 			if ( aCar.getCarState() == Car.STATE.CHARGE )
 			{
 				// green circle
-				g2.setColor( Color.GREEN );
+				g2.setColor( Color.ORANGE );
 				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
 				
 			}
-			else if ( aCar.getCarState() == Car.STATE.IDEL )
+			else if ( aCar.getCarState() == Car.STATE.IDLE )
+			{
+				// yellow circle
+				g2.setColor( Color.GREEN );
+				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
+			}
+			else if ( aCar.getCarState() == Car.STATE.CHARGING)
 			{
 				// yellow circle
 				g2.setColor( Color.YELLOW );

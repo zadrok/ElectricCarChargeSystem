@@ -189,4 +189,17 @@ public class ChargerSystem
 		return chargeThread.getCarChargeStatus(aCar);
 	}
 	
+	public boolean tryChargeCar(Car aCar)
+	{
+		for(ChargePoint a : chargePoints)
+		{
+			if(a.GetConnectedCar() == -1)
+			{
+				a.AddCar(aCar);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

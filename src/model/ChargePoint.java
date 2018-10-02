@@ -15,7 +15,7 @@ public class ChargePoint
 	public void AddCar(Car aToAdd)
 	{
 		connectedCar = aToAdd;
-		connectedCar.setCarState(STATE.CHARGE);
+		connectedCar.setCarState(STATE.CHARGING);
 	}
 	
 	public long GetConnectedCar()
@@ -28,7 +28,7 @@ public class ChargePoint
 	public Car DisconnectCar()
 	{
 		Car lReturn = connectedCar;
-		connectedCar.setCarState(STATE.IDEL);
+		connectedCar.setCarState(STATE.IDLE);
 		connectedCar = null;
 		return lReturn;
 	}
