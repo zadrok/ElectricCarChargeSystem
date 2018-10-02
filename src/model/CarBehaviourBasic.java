@@ -7,16 +7,19 @@ import jade.lang.acl.ACLMessage;
 public class CarBehaviourBasic extends CyclicBehaviour
 {
 	private Car car;
+	private long lastDischarge;
 	
 	public CarBehaviourBasic( Car aCar )
 	{
 		car = aCar;
+		lastDischarge = System.currentTimeMillis();
 	}
 
 	@Override
 	public void action() 
 	{	
-		ACLMessage msg = car.receive();
+		ACLMessage msg = car.blockingReceive(1000);
+
 		if ( msg != null )
 		{
 			// Handle message
@@ -27,6 +30,11 @@ public class CarBehaviourBasic extends CyclicBehaviour
 			reply.setPerformative( ACLMessage.INFORM );
 			reply.setContent( "Pong" );
 			car.send( reply );
+		}
+		if(System.currentTimeMillis() - lastDischarge > 10000)
+		{
+			lastDischarge = System.currentTimeMillis();
+			car.discharge();
 		}
 	}
 

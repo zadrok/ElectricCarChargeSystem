@@ -16,7 +16,7 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 	@Override
 	public void action() 
 	{
-		ACLMessage msg = masSch.receive();
+		ACLMessage msg = masSch.blockingReceive();
 		if ( msg != null )
 		{
 			// Handle message
@@ -27,6 +27,10 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			reply.setPerformative( ACLMessage.INFORM );
 			reply.setContent( "Ping" );
 			masSch.send( reply );
+		}
+		else
+		{
+			Thread.yield();
 		}
 	}
 	

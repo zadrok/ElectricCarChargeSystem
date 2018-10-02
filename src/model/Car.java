@@ -3,15 +3,17 @@ package model;
 import jade.core.Agent;
 import java.lang.Thread;
 import java.util.concurrent.atomic.AtomicBoolean;
+import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class Car extends Agent
 {
-	public static enum STATE { NONE, IDEL, CHARGE };
+	public static enum STATE { NONE, IDLE, CHARGE, CHARGING };
 
 	private long id;
 	private long maxChargeCapacity;
 	private long currentCharge;
+	private long dischargeRate;
 
 	// looked at by gui
 	private STATE carState;
@@ -24,7 +26,8 @@ public class Car extends Agent
 		super();
 		id = -1;
 		maxChargeCapacity = 1000;
-		currentCharge = 0;
+		currentCharge = 1000;
+		dischargeRate = 10;
 
 		initCommon();
 	}
@@ -41,7 +44,7 @@ public class Car extends Agent
 
 	private void initCommon()
 	{
-		carState = STATE.IDEL;
+		carState = STATE.IDLE;
 		startAngle = 0;
 	}
 
@@ -77,7 +80,7 @@ public class Car extends Agent
 
 	public void setCurrentCharge(long aCurrentcharge)
 	{
-		currentCharge = (getMaxChargeCapacity() > aCurrentcharge ? aCurrentcharge : getMaxChargeCapacity());
+		currentCharge = Math.max(0, Math.min(maxChargeCapacity, aCurrentcharge));
 	}
 
 	public double getStartAngle()
@@ -104,5 +107,12 @@ public class Car extends Agent
 	public void setCarState(STATE aState)
 	{
 		carState = aState;
+	}
+	
+	public void discharge()
+	{
+		setCurrentCharge(getCurrentCharge() - dischargeRate);
+		if(currentCharge < (maxChargeCapacity / 10))
+			carState = STATE.CHARGE;
 	}
 }
