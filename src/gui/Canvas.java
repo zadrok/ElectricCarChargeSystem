@@ -115,38 +115,7 @@ public class Canvas extends JPanel
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		
 		drawCells(g2,deltaTime);
-		
-		drawKey(g2);
     }
-	
-	private void drawKey(Graphics2D g2)
-	{
-		g2.setColor( Color.BLACK );
-
-		String outerCircle1 = "black dotted spinning outer circle = car agent is cycling (running)";
-		String outerCircle2 = "black dotted outer circle not spinning = canvas told to not update (option in options tab)";
-		String outerCircle3 = "red dotted outer circle = car agent is not cycling (stopped)";
-
-		String innerCircle1 = "green inner circle = car agent is charging";
-		String innerCircle2 = "yellow inner circle = car agent is ideling";
-		String innerCircle3 = "red inner circle = something is wrong with car agent (no state or other)";
-		
-		int x = 20;
-		int y = 500;
-		int yIncrement = 20;
-		
-		g2.drawString(outerCircle1, x, y);
-		y += yIncrement;
-		g2.drawString(outerCircle2, x, y);
-		y += yIncrement;
-		g2.drawString(outerCircle3, x, y);
-		y += yIncrement;
-		g2.drawString(innerCircle1, x, y);
-		y += yIncrement;
-		g2.drawString(innerCircle2, x, y);
-		y += yIncrement;
-		g2.drawString(innerCircle3, x, y);
-	}
 	
 	private void drawCells(Graphics2D g2, double aDeltaTime)
 	{
@@ -240,20 +209,30 @@ public class Canvas extends JPanel
 		}
 	}
 	
+	private void fillOval(Graphics2D g2, int x, int y, int w, int h, Color aColor)
+	{
+		g2.setColor( aColor );
+		g2.fillOval( x, y, w, h );
+	}
+	
+	private void drawRotatingCircle(Graphics2D g2, int x, int y, int w, int h, int aStarAngle, int aArcAngle, int aStrokeWidth, double aStrokeScale, Color aColor)
+	{
+		g2.setColor( aColor );
+		g2.setStroke( new BasicStroke( (int) ( aStrokeWidth * aStrokeScale ) ) );
+		
+		g2.drawArc(x, y, w, h, aStarAngle, aArcAngle);
+		g2.drawArc(x, y, w, h, aStarAngle+90, aArcAngle);
+		g2.drawArc(x, y, w, h, aStarAngle+180, aArcAngle);
+		g2.drawArc(x, y, w, h, aStarAngle+270, aArcAngle);
+	}
+	
 	private void drawAgent(Graphics2D g2, double aDeltaTime, int x, int y, int w, int h, Car aCar, Cell aCell)
 	{
 		if ( gui.getChargerSystem().isCharging() )
 		{
 			double speed = 0.05;
-			int arcAngle = 70;
 			
-			g2.setColor( Color.BLACK );
-			g2.setStroke( new BasicStroke( (int) ( aCell.getStrokeWidth() * aCell.getStrokeScale() ) ) );
-			
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle(), arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+90, arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+180, arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+270, arcAngle);
+			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.BLACK);
 			
 			aCar.setStartAngle( aCar.getStartAngle() + speed * aDeltaTime );
 			
@@ -262,47 +241,33 @@ public class Canvas extends JPanel
 			
 			int width = w/2;
 			int height = h/2;
-			int xCenter = x + width;
-			int yCenter = y + height;
+			int xCenter = x + (width/2);
+			int yCenter = y + (height/2);
 			
 			if ( aCar.getCarState() == Car.STATE.CHARGE )
 			{
-				// green circle
-				g2.setColor( Color.ORANGE );
-				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
-				
+				fillOval( g2, xCenter, yCenter, width, height, Color.ORANGE );
 			}
 			else if ( aCar.getCarState() == Car.STATE.IDLE )
 			{
-				// yellow circle
-				g2.setColor( Color.GREEN );
-				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
+				fillOval( g2, xCenter, yCenter, width, height, Color.YELLOW );
 			}
 			else if ( aCar.getCarState() == Car.STATE.CHARGING)
 			{
-				// yellow circle
-				g2.setColor( Color.YELLOW );
-				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
+				fillOval( g2, xCenter, yCenter, width, height, Color.GREEN );
 			}
 			else
 			{
-				// red circle
-				g2.setColor( Color.RED );
-				g2.fillOval( xCenter-(width/2), yCenter-(height/2), width, height );
+				fillOval( g2, xCenter, yCenter, width, height, Color.RED );
 			}
+			
+			// charge bar
+			
 			
 		}
 		else
 		{
-			int arcAngle = 70;
-			
-			g2.setColor( Color.RED );
-			g2.setStroke( new BasicStroke( 10 ) );
-			
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle(), arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+90, arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+180, arcAngle);
-			g2.drawArc(x, y, w, h, (int) aCar.getStartAngle()+270, arcAngle);
+			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.RED);
 		}
 		
 	}

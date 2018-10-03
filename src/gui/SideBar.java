@@ -11,6 +11,7 @@ public class SideBar extends JPanel
 	private SideBarTabOptions tabOptions;	
 	private SideBarTabMasterScheduler tabMasSch;
 	private SideBarTabCar tabCar;
+	private SideBarTabKey tabKey;
 	
 	public SideBar(GUI aGUI, int x, int y, int width, int height)
 	{
@@ -25,10 +26,12 @@ public class SideBar extends JPanel
 		tabOptions = new SideBarTabOptions(this);
 		tabMasSch = new SideBarTabMasterScheduler(this);
 		tabCar = new SideBarTabCar(this);
+		tabKey = new SideBarTabKey(this);
 		
 		tabPane.add("Options", tabOptions);
 		tabPane.add("Master Scheduler", tabMasSch);
 		tabPane.add("Car", tabCar);
+		tabPane.add("Key", tabKey);
 		
 		add( tabPane );
 	}
