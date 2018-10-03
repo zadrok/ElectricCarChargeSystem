@@ -27,7 +27,7 @@ public class Canvas extends JPanel
 	public Canvas(GUI aGUI, int x, int y, int width, int height)
 	{
 		super();
-		setBounds( x,y,width,height );
+		updateSize( x,y,width,height );
 		setLayout(null);
 		gui = aGUI;
 		looper = new CanvasLooper(this);
@@ -253,6 +253,10 @@ public class Canvas extends JPanel
 		else if ( aCar.getCarState() == Car.STATE.CHARGING)
 		{
 			fillOval( g2, innerRect, Color.GREEN );
+		}
+		else if ( aCar.getCarState() == Car.STATE.BURN)
+		{
+			fillOval( g2, innerRect, Color.MAGENTA );
 		}
 		else
 		{

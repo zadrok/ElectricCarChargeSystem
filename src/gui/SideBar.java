@@ -16,7 +16,7 @@ public class SideBar extends JPanel
 	public SideBar(GUI aGUI, int x, int y, int width, int height)
 	{
 		super();
-		setBounds( x,y,width,height );
+		updateSize( x,y,width,height );
 		setLayout(null);
 		gui = aGUI;
 		
@@ -39,16 +39,15 @@ public class SideBar extends JPanel
 	public void updateSize(int x, int y, int width, int height)
 	{
 		setBounds( x,y,width,height );
+		if ( tabPane != null )
+			tabPane.setBounds(0, 0, getWidth(), getHeight());
 	}
 	
 	public void paintComponent(Graphics g)
     {
 		Graphics2D g2 = (Graphics2D) g;
-		
 		g2.setColor(Color.LIGHT_GRAY);
 		g2.fillRect(0, 0, getWidth(), getHeight());
-		
-		
     }
 	
 	public void refresh()
@@ -56,7 +55,6 @@ public class SideBar extends JPanel
 		tabOptions.refresh();
 		tabMasSch.refresh();
 		tabCar.refresh();
-		
 	}
 	
 	public GUI getGUI()

@@ -31,6 +31,7 @@ public class CarBehaviourBasic extends CyclicBehaviour
 			reply.setContent( "Pong" );
 			car.send( reply );
 		}
+		
 		if(System.currentTimeMillis() - lastDischarge > 10000)
 		{
 			lastDischarge = System.currentTimeMillis();

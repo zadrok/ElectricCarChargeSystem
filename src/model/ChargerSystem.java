@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -31,8 +32,11 @@ public class ChargerSystem
 	private ChargeThread chargeThread;
 	private Thread chargeThreadThread;
 	
+	private Random random;
+	
 	public ChargerSystem()
 	{
+		random = new Random();
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
 		chargeThread = new ChargeThread(chargePoints, 1000);
 		chargeThreadThread = new Thread(chargeThread);
@@ -63,11 +67,14 @@ public class ChargerSystem
 		
 		for ( int i = 0; i < 10; i++ )
 		{
-			createCarAgent( 1000, 0 );
+			int max = 1000;
+			int base = 100;
+			int current = random.nextInt( max - base ) + base;
+			createCarAgent( max, current );
 		}
 		
-		messageAllCars(ACLMessage.INFORM, "HI CAR");
-		messageMasterScheduler(ACLMessage.INFORM, "Master Scheduler");
+//		messageAllCars(ACLMessage.INFORM, "HI CAR");
+//		messageMasterScheduler(ACLMessage.INFORM, "Master Scheduler");
 	}
 	
 	public void createMasterScheduler()

@@ -8,7 +8,7 @@ import jade.lang.acl.ACLMessage;
 @SuppressWarnings("serial")
 public class Car extends Agent
 {
-	public static enum STATE { NONE, IDLE, CHARGE, CHARGING };
+	public static enum STATE { NONE, IDLE, CHARGE, CHARGING, BURN };
 
 	private long id;
 	private long maxChargeCapacity;

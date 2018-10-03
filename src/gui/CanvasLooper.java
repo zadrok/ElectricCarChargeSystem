@@ -28,6 +28,7 @@ public class CanvasLooper implements Runnable
 			if ( GlobalVariables.drawLoop )
 			{
 				canvas.refresh();
+				canvas.getGUI().refreshSideBar();
 			}
 			
 			// Sleep for given period of time

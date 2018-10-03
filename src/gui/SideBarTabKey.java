@@ -22,6 +22,7 @@ public class SideBarTabKey extends SideBarTab
 		data.add( "Inner circle:" );
 		data.add( "Green: car agent is charging" );
 		data.add( "Orange: car agent wants to charge" );
+		data.add( "Magenta: Burning charge faster" );
 		data.add( "Yellow: car agent is ideling" );
 		data.add( "Red: something is wrong with car agent (no state or other)" );
 		
