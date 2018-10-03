@@ -122,7 +122,7 @@ public class ChargerSystem
 					
 					for (Agent lAgent : carAgents)
 					{
-						msg.addReceiver(new AID(lAgent.getName(), AID.ISLOCALNAME));
+						msg.addReceiver(new AID(lAgent.getLocalName(), AID.ISLOCALNAME));
 					}
 					
 					
@@ -153,7 +153,7 @@ public class ChargerSystem
 					ACLMessage msg = new ACLMessage(aMeggageType);
 					msg.setContent(aMessage);
 					
-					msg.addReceiver(new AID(masterSchedulerAgent.getName(), AID.ISLOCALNAME));
+					msg.addReceiver(new AID(masterSchedulerAgent.getLocalName(), AID.ISLOCALNAME));
 					
 					myAgent.send(msg);
 				}
