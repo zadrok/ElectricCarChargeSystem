@@ -18,6 +18,26 @@ import jade.wrapper.gateway.JadeGateway;
 
 public class ChargerSystem 
 {
+	@SuppressWarnings("hiding")
+	public class Tuple<Car, Long, Long1>
+	{
+		private Car car;
+		private long timeStart;
+		private long timeEnd;
+		public Tuple(Car car, long timeStart, long timeEnd)
+		{
+			this.car = car;
+			this.timeStart = timeStart;
+			this.timeEnd = timeEnd;
+		}
+		public Car car() { return this.car;}
+		public long timeStart() { return this.timeStart;}
+		public long timeEnd() { return this.timeEnd;}
+		public void setCar(Car car) { this.car = car;}
+		public void setTimeStart(long time) { this.timeStart = time;}
+		public void setTimeEnd(long time) { this.timeEnd = time;}
+	}
+	
 	private Runtime runtime;
 	private Profile profileCars;
 	private ContainerController containerCars;
@@ -33,11 +53,13 @@ public class ChargerSystem
 	private Thread chargeThreadThread;
 	
 	private Random random;
+	private List<Tuple<Car, Long, Long>> chargeQueue;
 	
 	public ChargerSystem()
 	{
 		random = new Random();
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
+		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
 		chargeThread = new ChargeThread(chargePoints, 1000);
 		chargeThreadThread = new Thread(chargeThread);
 		chargeThread.add(new ChargePoint(50));
@@ -81,7 +103,7 @@ public class ChargerSystem
 	{
 		try
 		{
-			masterSchedulerAgent = new MasterScheduler();
+			masterSchedulerAgent = new MasterScheduler(this);
 			String name = "Master Scheduler";
 			AgentController ac = containerMasterScheduler.acceptNewAgent(name, masterSchedulerAgent);
 			ac.start();
@@ -194,6 +216,23 @@ public class ChargerSystem
 	public boolean isCarCharging(Car aCar)
 	{
 		return chargeThread.getCarChargeStatus(aCar);
+	}
+	
+	public boolean requestCharge(Car aCar)
+	{
+		return requestCharge(aCar, 0, 60);
+	}
+	
+	public boolean requestCharge(Car aCar, long aTimeStart, long aTimePeriod)
+	{
+		for(Tuple<Car, Long, Long> a : chargeQueue)
+		{
+			if(a.car().getID() == aCar.getID())
+				return false;
+		}
+		long timeMinutes = System.currentTimeMillis()/60000;
+		chargeQueue.add(new Tuple<Car, Long, Long>(aCar, timeMinutes+aTimeStart, timeMinutes+aTimeStart+aTimePeriod));
+		return true;
 	}
 	
 	public boolean tryChargeCar(Car aCar)

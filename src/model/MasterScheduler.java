@@ -5,10 +5,12 @@ import jade.core.Agent;
 public class MasterScheduler extends Agent
 {
 	private MasterSchedulerBehaviourBasic MSBehaviour;
+	private ChargerSystem chargerSystem;
 	
-	public MasterScheduler()
+	public MasterScheduler(ChargerSystem aSys)
 	{
 		super();
+		chargerSystem = aSys;
 	}
 	
 	protected void setup()
@@ -20,5 +22,10 @@ public class MasterScheduler extends Agent
 	public MasterSchedulerBehaviourBasic getMSBehaviour()
 	{
 		return MSBehaviour;
+	}
+	
+	public ChargerSystem getChargerSystem()
+	{
+		return chargerSystem;
 	}
 }

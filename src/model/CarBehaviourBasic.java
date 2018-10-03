@@ -57,9 +57,8 @@ public class CarBehaviourBasic extends CyclicBehaviour
 			newMSG.addReceiver( new AID( "Master Scheduler", AID.ISLOCALNAME ) );
 			car.send( newMSG );
 		}
-		
-		
-		if(System.currentTimeMillis() - lastDischarge > 10000)
+    
+		if(System.currentTimeMillis() - lastDischarge > 1000)
 		{
 			lastDischarge = System.currentTimeMillis();
 			car.discharge();
