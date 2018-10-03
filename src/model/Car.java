@@ -15,6 +15,9 @@ public class Car extends Agent
 	private long currentCharge;
 	private long dischargeRate;
 
+	private boolean wantCharge;
+	private boolean waitingForCharge;
+	
 	// looked at by gui
 	private STATE carState;
 
@@ -24,6 +27,8 @@ public class Car extends Agent
 	public Car()
 	{
 		super();
+		wantCharge = false;
+		waitingForCharge = false;
 		id = -1;
 		maxChargeCapacity = 1000;
 		currentCharge = 1000;
@@ -43,6 +48,26 @@ public class Car extends Agent
 	protected void setup()
 	{
 		addBehaviour( new CarBehaviourBasic( this ) );
+	}
+	
+	public boolean isWantCharge()
+	{
+		return wantCharge;
+	}
+	
+	public void setWantCharge(boolean aBool)
+	{
+		wantCharge = aBool;
+	}
+	
+	public boolean isWaitingForCharge()
+	{
+		return waitingForCharge;
+	}
+	
+	public void setWaitingForCharge(boolean aBool)
+	{
+		waitingForCharge = aBool;
 	}
 
 	public long getID()
@@ -105,6 +130,11 @@ public class Car extends Agent
 	{
 		setCurrentCharge(getCurrentCharge() - dischargeRate);
 		if(currentCharge < (maxChargeCapacity / 10))
+		{
 			carState = STATE.CHARGE;
+			
+			if ( !isWaitingForCharge() )
+				setWantCharge(true);
+		}
 	}
 }
