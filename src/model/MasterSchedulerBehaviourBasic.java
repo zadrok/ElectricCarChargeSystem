@@ -1,5 +1,6 @@
 package model;
 
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -26,6 +27,7 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			
 			if ( msg.getContent().startsWith( "wantCharge" ) )
 			{
+				//boolean response = masSch.getChargerSystem().requestCharge(msg.getSender().getClass());
 				ACLMessage reply = msg.createReply();
 				reply.setPerformative( ACLMessage.INFORM );
 				reply.setContent( "wantCharge ok" );

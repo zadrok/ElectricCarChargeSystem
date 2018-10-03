@@ -58,8 +58,8 @@ public class CarBehaviourBasic extends CyclicBehaviour
 			car.send( newMSG );
 		}
 		
-		
-		if(System.currentTimeMillis() - lastDischarge > 10000)
+
+		if(System.currentTimeMillis() - lastDischarge > 1000)
 		{
 			lastDischarge = System.currentTimeMillis();
 			car.discharge();
