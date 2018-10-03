@@ -63,7 +63,7 @@ public class ChargerSystem
 		
 		for ( int i = 0; i < 10; i++ )
 		{
-			createCarAgent( i, 1000, 0 );
+			createCarAgent( 1000, 0 );
 		}
 		
 		messageAllCars(ACLMessage.INFORM, "HI CAR");

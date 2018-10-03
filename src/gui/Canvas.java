@@ -55,31 +55,14 @@ public class Canvas extends JPanel
 	private void initMouseListener()
 	{
 		ml = new MouseListener() {
-			
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mouseReleased(MouseEvent e) { }
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mousePressed(MouseEvent e) { }
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mouseExited(MouseEvent e) { }
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mouseEntered(MouseEvent e) { }
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
@@ -93,7 +76,6 @@ public class Canvas extends JPanel
 						break;
 					}
 				}
-				
 			}
 		};
 	}
@@ -209,10 +191,16 @@ public class Canvas extends JPanel
 		}
 	}
 	
-	private void fillOval(Graphics2D g2, int x, int y, int w, int h, Color aColor)
+	private void fillOval(Graphics2D g2, Rectangle aRect, Color aColor)
 	{
 		g2.setColor( aColor );
-		g2.fillOval( x, y, w, h );
+		g2.fillOval( aRect.x, aRect.y, aRect.width, aRect.height );
+	}
+	
+	private void fillRect(Graphics2D g2, Rectangle aRect, Color aColor)
+	{
+		g2.setColor( aColor );
+		g2.fillRect( aRect.x, aRect.y, aRect.width, aRect.height );
 	}
 	
 	private void drawRotatingCircle(Graphics2D g2, int x, int y, int w, int h, int aStarAngle, int aArcAngle, int aStrokeWidth, double aStrokeScale, Color aColor)
@@ -233,43 +221,68 @@ public class Canvas extends JPanel
 			double speed = 0.05;
 			
 			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.BLACK);
+			drawStatusCircle( g2, aCar, x, y, w, h );
+			drawChargeBar( g2, aCar, x, y, w, h );
 			
 			aCar.setStartAngle( aCar.getStartAngle() + speed * aDeltaTime );
 			
 			if ( aCar.getStartAngle() >= 360 )
 				aCar.setStartAngle( aCar.getStartAngle() - 360 );
-			
-			int width = w/2;
-			int height = h/2;
-			int xCenter = x + (width/2);
-			int yCenter = y + (height/2);
-			
-			if ( aCar.getCarState() == Car.STATE.CHARGE )
-			{
-				fillOval( g2, xCenter, yCenter, width, height, Color.ORANGE );
-			}
-			else if ( aCar.getCarState() == Car.STATE.IDLE )
-			{
-				fillOval( g2, xCenter, yCenter, width, height, Color.YELLOW );
-			}
-			else if ( aCar.getCarState() == Car.STATE.CHARGING)
-			{
-				fillOval( g2, xCenter, yCenter, width, height, Color.GREEN );
-			}
-			else
-			{
-				fillOval( g2, xCenter, yCenter, width, height, Color.RED );
-			}
-			
-			// charge bar
-			
-			
 		}
 		else
 		{
 			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.RED);
 		}
 		
+	}
+	
+	private void drawStatusCircle(Graphics2D g2, Car aCar, int x, int y, int w, int h)
+	{
+		Rectangle innerRect = new Rectangle();
+		innerRect.width = w/2;
+		innerRect.height = h/2;
+		innerRect.x = x + (innerRect.width/2);
+		innerRect.y = y + (innerRect.height/2);
+		
+		if ( aCar.getCarState() == Car.STATE.CHARGE )
+		{
+			fillOval( g2, innerRect, Color.ORANGE );
+		}
+		else if ( aCar.getCarState() == Car.STATE.IDLE )
+		{
+			fillOval( g2, innerRect, Color.YELLOW );
+		}
+		else if ( aCar.getCarState() == Car.STATE.CHARGING)
+		{
+			fillOval( g2, innerRect, Color.GREEN );
+		}
+		else
+		{
+			fillOval( g2, innerRect, Color.RED );
+		}
+	}
+	
+	private void drawChargeBar(Graphics2D g2, Car aCar, int x, int y, int w, int h)
+	{
+		Color back = new Color( 100, 100, 100, 100 );
+		Color fore = new Color( 100, 200, 100, 200 );
+		int xCenter = x + (w/2);
+		int yCenter = y + (h/2);
+		int barWidth = w/5;
+		int barHeight = h/3;
+		Rectangle barRect = new Rectangle();
+		barRect.x = xCenter - ( barWidth/2 );
+		barRect.y = yCenter - ( barHeight/2 );
+		barRect.width = barWidth;
+		barRect.height = barHeight;
+		fillRect( g2, barRect, back );
+		double current = aCar.getCurrentCharge();
+		double max = aCar.getMaxChargeCapacity();
+		double chargePercentage = 1 - ( current / max );
+		int remove = (int) (barRect.height * chargePercentage);
+		barRect.y += remove;
+		barRect.height -= remove;
+		fillRect( g2, barRect, fore );
 	}
 	
 	public Color getRandomColor()

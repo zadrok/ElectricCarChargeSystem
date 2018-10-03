@@ -28,24 +28,16 @@ public class Car extends Agent
 		maxChargeCapacity = 1000;
 		currentCharge = 1000;
 		dischargeRate = 10;
-
-		initCommon();
+		carState = STATE.IDLE;
+		startAngle = 0;
 	}
 
 	public Car(long aID, long aMaxChargeCapacity, long aCurrentCharge)
 	{
-		super();
+		this();
 		id = aID;
 		maxChargeCapacity = aMaxChargeCapacity;
 		currentCharge = aCurrentCharge;
-
-		initCommon();
-	}
-
-	private void initCommon()
-	{
-		carState = STATE.IDLE;
-		startAngle = 0;
 	}
 
 	protected void setup()
