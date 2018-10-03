@@ -7,20 +7,14 @@ import model.Car;
 
 public class Cell
 {
-	private int x;
-	private int y;
-	private int w;
-	private int h;
+	private Rectangle rect;
 	private Car car;
 	private int strokeWidth;
 	private double strokeScale;
 	
 	public Cell()
 	{
-		x = 0;
-		y = 0;
-		w = 50;
-		h = 50;
+		rect = new Rectangle(0, 0, 50, 50);
 		car = null;
 		strokeWidth = 10;
 		strokeScale = 1.0;
@@ -28,10 +22,11 @@ public class Cell
 	
 	public Cell(int aX, int aY, int aW, int aH, Car aCar, int aStrokeWidth, double aStrokeScale)
 	{
-		x = aX;
-		y = aY;
-		w = aW;
-		h = aH;
+		this();
+		rect.x = aX;
+		rect.y = aY;
+		rect.width = aW;
+		rect.height = aH;
 		car = aCar;
 		strokeWidth = aStrokeWidth;
 		strokeScale = aStrokeScale;
@@ -39,47 +34,57 @@ public class Cell
 	
 	public boolean containsPoint(Point aPoint)
 	{
-		return new Rectangle(x, y, w, h).contains(aPoint);
+		return rect.contains(aPoint);
 	}
 	
 	public int getX()
 	{
-		return x;
+		return rect.x;
 	}
 	
 	public void setX(int aX)
 	{
-		x = aX;
+		rect.x = aX;
 	}
 	
 	public int getY()
 	{
-		return y;
+		return rect.y;
 	}
 	
 	public void setY(int aY)
 	{
-		y = aY;
+		rect.y = aY;
 	}
 	
 	public int getW()
 	{
-		return w;
+		return rect.width;
 	}
 	
 	public void setW(int aW)
 	{
-		w = aW;
+		rect.width = aW;
 	}
 	
 	public int getH()
 	{
-		return h;
+		return rect.height;
 	}
 	
 	public void setH(int aH)
 	{
-		h = aH;
+		rect.height = aH;
+	}
+	
+	public Rectangle getRect()
+	{
+		return rect;
+	}
+	
+	public void setRect(Rectangle aRect)
+	{
+		rect = aRect;
 	}
 	
 	public Car getCar()

@@ -93,8 +93,7 @@ public class Canvas extends JPanel
 		double deltaTime = looper.getDeltaTime();
 		
 		// clear screen white
-		g2.setColor(Color.WHITE);
-		g2.fillRect(0, 0, getWidth(), getHeight());
+		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), Color.WHITE );
 		
 		drawCells(g2,deltaTime);
     }
@@ -122,8 +121,7 @@ public class Canvas extends JPanel
 			if ( cell.getCar() != null && getGUI().getSelectedCar() != null && cell.getCar() == getGUI().getSelectedCar() )
 				useColor = cellColorSelected;
 			
-			g2.setColor( useColor );
-			g2.fillRect( cell.getX(), cell.getY(), cell.getW(), cell.getH() );
+			fillRect( g2, cell.getRect(), useColor );
 			
 			int paddingW = (int) (cell.getW()*0.1);
 			int paddingH = (int) (cell.getH()*0.1);

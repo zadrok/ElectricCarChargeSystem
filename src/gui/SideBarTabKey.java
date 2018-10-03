@@ -17,7 +17,6 @@ public class SideBarTabKey extends SideBarTab
 		data.add( "Black not spinning: canvas told to not update" );
 		data.add( "Red: car agent is not cycling (stopped)" );
 		
-		
 		data.add( "" );
 		
 		data.add( "Inner circle:" );
@@ -25,6 +24,11 @@ public class SideBarTabKey extends SideBarTab
 		data.add( "Orange: car agent wants to charge" );
 		data.add( "Yellow: car agent is ideling" );
 		data.add( "Red: something is wrong with car agent (no state or other)" );
+		
+		data.add( "" );
+		
+		data.add( "Center bar:" );
+		data.add( "current charge of car" );
 		
 		for ( String str : data )
 		{
