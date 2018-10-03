@@ -23,10 +23,15 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			System.out.println( masSch.getLocalName() + ": Received message " + msg.getContent() + " from " + msg.getSender().getLocalName() );
 			
 			// reply
-			ACLMessage reply = msg.createReply();
-			reply.setPerformative( ACLMessage.INFORM );
-			reply.setContent( "Ping" );
-			masSch.send( reply );
+			
+			if ( msg.getContent().startsWith( "wantCharge" ) )
+			{
+				ACLMessage reply = msg.createReply();
+				reply.setPerformative( ACLMessage.INFORM );
+				reply.setContent( "wantCharge ok" );
+				masSch.send( reply );
+			}
+			
 		}
 		else
 		{
