@@ -69,6 +69,11 @@ public class ChargerSystem
 		chargeThread.add(new ChargePoint(50));
 	}
 	
+	public void createChargePoint(int aChargeRate)
+	{
+		chargeThread.add( new ChargePoint( aChargeRate ) );
+	}
+	
 	public void initJadeAgents()
 	{
 		carAgents = new ArrayList<>();
@@ -120,7 +125,7 @@ public class ChargerSystem
 		createCarAgent(id, aMaxchargeCapacity, aCurrentcharge);
 	}
 	
-	public void createCarAgent( long aID, long aMaxchargeCapacity, long aCurrentcharge )
+	private void createCarAgent( long aID, long aMaxchargeCapacity, long aCurrentcharge )
 	{
 		try
 		{
@@ -196,6 +201,16 @@ public class ChargerSystem
 		}
 		
 		System.out.println("Done sending message to Master Scheduler");
+	}
+	
+	public boolean carOnCharge(Car aCar)
+	{
+		for ( ChargePoint lCPoint : getChargePoints() )
+		{
+			if ( lCPoint.GetConnectedCar() == aCar.getID() )
+				return true;
+		}
+		return false;
 	}
 	
 	public ArrayList<Car> getCarAgents()

@@ -28,6 +28,7 @@ public class GUI
 	private SideBar sideBar;
 	
 	private Car selectedCar;
+	private ChargePoint selectedChargePoint;
 	
 	public GUI( ChargerSystem aChargeSystem )
 	{
@@ -38,6 +39,7 @@ public class GUI
 		windowHegiht = 720;
 		windowColor = Color.WHITE;
 		selectedCar = null;
+		selectedChargePoint = null;
 		
 		frame = new JFrame(windowTitle);
 		frame.setSize(windowWidth,windowHegiht);
@@ -124,6 +126,16 @@ public class GUI
 	public void setSelectedCar(Car aCar)
 	{
 		selectedCar = aCar;
+	}
+	
+	public ChargePoint getSelectedChargePoint()
+	{
+		return selectedChargePoint;
+	}
+	
+	public void setSelectedChargePoint(ChargePoint aChargePoint)
+	{
+		selectedChargePoint = aChargePoint;
 	}
 	
 }

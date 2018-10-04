@@ -12,8 +12,17 @@ public class SideBarTabOptions extends SideBarTab
 	private ActionListener al;
 	
 	private JCheckBox drawLoop;
-	private JButton createNewCarAgent;
-	private ActionListener createNewCarAgentActionListener;
+	private JButton createNewCarSmall;
+	private JButton createNewCarMedium;
+	private JButton createNewCarLarge;
+	private JButton createNewCarCustom;
+	private ActionListener createNewCarActionListener;
+
+	private JButton createNewChargePointSmall;
+	private JButton createNewChargePointMedium;
+	private JButton createNewChargePointLarge;
+	private JButton createNewChargePointCustom;
+	private ActionListener createNewChargePointActionListener;
 	
 	public SideBarTabOptions(SideBar aSideBar)
 	{
@@ -40,6 +49,8 @@ public class SideBarTabOptions extends SideBarTab
 		int width = getWidth()-20;
 		int rightMargin = 10;
 		int height = 20;
+		
+		int bttnWidth = (int)(width/1.2);
 
 		
 		drawLoop = new JCheckBox("drawLoop", GlobalVariables.drawLoop);
@@ -47,24 +58,104 @@ public class SideBarTabOptions extends SideBarTab
 		drawLoop.addActionListener(al);
 
 		yOffset += yOffsetIncrement;
-		createNewCarAgent = new JButton( "Create New Car Agent" );
-		createNewCarAgent.setBounds(rightMargin, yOffset, width/2, height);
-		createNewCarAgent.addActionListener( createNewCarAgentActionListener );
+		createNewCarSmall = new JButton( "Create New Car Small" );
+		createNewCarSmall.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewCarSmall.addActionListener( createNewCarActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewCarMedium = new JButton( "Create New Car Medium" );
+		createNewCarMedium.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewCarMedium.addActionListener( createNewCarActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewCarLarge = new JButton( "Create New Car Large" );
+		createNewCarLarge.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewCarLarge.addActionListener( createNewCarActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewCarCustom = new JButton( "Create New Car Custom" );
+		createNewCarCustom.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewCarCustom.addActionListener( createNewCarActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewChargePointSmall = new JButton( "Create New Charge Point Small" );
+		createNewChargePointSmall.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewChargePointSmall.addActionListener( createNewChargePointActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewChargePointMedium = new JButton( "Create New Charge Point Medium" );
+		createNewChargePointMedium.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewChargePointMedium.addActionListener( createNewChargePointActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewChargePointLarge = new JButton( "Create New Charge Point Large" );
+		createNewChargePointLarge.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewChargePointLarge.addActionListener( createNewChargePointActionListener );
+
+		yOffset += yOffsetIncrement;
+		createNewChargePointCustom = new JButton( "Create New Charge Point Custom" );
+		createNewChargePointCustom.setBounds(rightMargin, yOffset, bttnWidth, height);
+		createNewChargePointCustom.addActionListener( createNewChargePointActionListener );
 		
 		
 		add(drawLoop);
-		add(createNewCarAgent);
+		add(createNewCarSmall);
+		add(createNewCarMedium);
+		add(createNewCarLarge);
+		add(createNewCarCustom);
+		add(createNewChargePointSmall);
+		add(createNewChargePointMedium);
+		add(createNewChargePointLarge);
+		add(createNewChargePointCustom);
 	}
 	
 	private void initActionListeners()
 	{
-		createNewCarAgentActionListener = new ActionListener() 
+		createNewCarActionListener = new ActionListener() 
 		{
-			
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				getGUI().getChargerSystem().createCarAgent(1000, 50);
+				if ( e.getSource() == createNewCarSmall )
+				{
+					getGUI().getChargerSystem().createCarAgent(1000, 50);
+				}
+				else if ( e.getSource() == createNewCarMedium )
+				{
+					getGUI().getChargerSystem().createCarAgent(5000, 50);
+				}
+				else if ( e.getSource() == createNewCarLarge )
+				{
+					getGUI().getChargerSystem().createCarAgent(10000, 50);
+				}
+				else if ( e.getSource() == createNewCarCustom )
+				{
+					System.out.println( "TODO - open dialog asking user input" );
+				}
+			}
+		};
+		
+		createNewChargePointActionListener = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if ( e.getSource() == createNewChargePointSmall )
+				{
+					getGUI().getChargerSystem().createChargePoint(50);
+				}
+				else if ( e.getSource() == createNewChargePointMedium )
+				{
+					getGUI().getChargerSystem().createChargePoint(100);
+				}
+				else if ( e.getSource() == createNewChargePointLarge )
+				{
+					getGUI().getChargerSystem().createChargePoint(300);
+				}
+				else if ( e.getSource() == createNewChargePointCustom )
+				{
+					System.out.println( "TODO - open dialog asking user input" );
+				}
 			}
 		};
 	}

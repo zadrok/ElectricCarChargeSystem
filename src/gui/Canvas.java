@@ -5,23 +5,30 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.*;
 import model.*;
-import java.util.ArrayList;
 import java.util.Random;
 
+@SuppressWarnings("serial")
 public class Canvas extends JPanel
 {
 	private GUI gui;
 	private CanvasLooper looper;
-	private ArrayList<Cell> cells;
 	private Color cellColorA;
 	private Color cellColorB;
 	private Color cellColorCurrent;
 	private Color cellColorSelected;
 	Random random = new Random();
 	private Rectangle chargePointRect;
-	private Rectangle vehicleRect;
+	private Rectangle carRect;
 	private Color chargePointRectColor;
-	private Color vehicleRectColor;
+	private Color carRectColor;
+	private double screenSplit;
+	private int titleOffset;
+	private int titlePadding;
+	private double animateSpeed;
+	private int strokeWidth;
+	private double strokeScale;
+	private double rotatingCircleScale;
+	private int cellGap;
 	
 	public Canvas(GUI aGUI, int x, int y, int width, int height)
 	{
@@ -30,12 +37,20 @@ public class Canvas extends JPanel
 		setLayout(null);
 		gui = aGUI;
 		looper = new CanvasLooper(this);
-		cells = new ArrayList<Cell>();
+		
+		screenSplit = 3;
+		titleOffset = 15;
+		titlePadding = titleOffset+5;
+		animateSpeed = 0.05;
+		strokeWidth = 5;
+		strokeScale = 1.0;
+		rotatingCircleScale = 0.8;
+		cellGap = 10;
 		
 		addMouseListener( mouseListener() );
 		
 		chargePointRectColor = new Color( 50, 100, 50, 50 );
-		vehicleRectColor = new Color( 100, 50, 50, 50 );
+		carRectColor = new Color( 100, 50, 50, 50 );
 		
 		int a = 240;
 		cellColorA = new Color(a,a,a);
@@ -49,8 +64,9 @@ public class Canvas extends JPanel
 	public void updateSize(int x, int y, int width, int height)
 	{
 		setBounds( x,y,width,height );
-		chargePointRect = new Rectangle( 0, 0, getWidth(), getHeight()/2 );
-		vehicleRect = new Rectangle( 0, getHeight()/2, getWidth(), getHeight()/2 );
+		int partHeight = (int) (getHeight()/screenSplit);
+		chargePointRect = new Rectangle( 0, 0, getWidth(), partHeight );
+		carRect = new Rectangle( 0, partHeight, getWidth(), height-partHeight );
 	}
 	
 	private MouseListener mouseListener()
@@ -67,16 +83,73 @@ public class Canvas extends JPanel
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				// find out what cell was clicked in
-				for ( Cell cell : cells )
+//				getGUI().getChargerSystem().getChargePoints().get(0).AddCar( getGUI().getChargerSystem().getCarAgents().get(0) );
+				
+				// limit search
+				if ( chargePointRect.contains( e.getPoint() ) )
 				{
-					if ( cell.containsPoint(e.getPoint()) )
+					Rectangle drawAreaRect = makeDrawArea(chargePointRect);
+					
+					int numPoints = getGUI().getChargerSystem().getChargePoints().size();
+					int[] info = makeRectInfo( drawAreaRect, numPoints );
+					Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
+					int i = info[3];
+					int count = 0;
+					
+					for ( ChargePoint lCPoint : getGUI().getChargerSystem().getChargePoints() )
 					{
-						getGUI().setSelectedCar( cell.getCar() );
-						getGUI().refreshSideBar();
-						break;
+						if ( rect.contains( e.getPoint() ) )
+						{
+							getGUI().setSelectedChargePoint( lCPoint );
+							break;
+						}
+						
+						rect.x += rect.width + cellGap;
+						count++;
+						if ( count >= i )
+						{
+							rect.x = cellGap;
+							rect.y += rect.height + cellGap;
+							count = 0;
+						}
 					}
+					
+					
 				}
+				else if ( carRect.contains( e.getPoint() ) )
+				{
+					
+					Rectangle drawAreaRect = makeDrawArea( carRect );
+
+					int numCars = getGUI().getChargerSystem().getCarAgents().size();
+					int[] info = makeRectInfo( drawAreaRect, numCars );
+					Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
+					int i = info[3];
+					int count = 0;
+
+					for ( Car lCar : getGUI().getChargerSystem().getCarAgents() )
+					{
+						if ( getGUI().getChargerSystem().carOnCharge( lCar ) )
+							continue;
+						
+						if ( rect.contains( e.getPoint() ) )
+						{
+							getGUI().setSelectedCar( lCar );
+							break;
+						}
+						
+						rect.x += rect.width + cellGap;
+						count++;
+						if ( count >= i )
+						{
+							rect.x = cellGap;
+							rect.y += rect.height + cellGap;
+							count = 0;
+						}
+					}
+					
+				}
+				
 			}
 		};
 	}
@@ -97,195 +170,165 @@ public class Canvas extends JPanel
 		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), Color.WHITE );
 		
 		chargePointController(g2,deltaTime);
-		vehicleController(g2,deltaTime);
+		carController(g2,deltaTime);
     }
 	
 	private void chargePointController(Graphics2D g2, double aDeltaTime)
 	{
 		fillRect( g2, chargePointRect, chargePointRectColor );
-		
-		int titleOffset = 15;
-		int titlePadding = titleOffset+5;
-		Rectangle drawAreaRect = new Rectangle(chargePointRect.x, chargePointRect.y+titlePadding, chargePointRect.width, chargePointRect.height-titlePadding);
-		
 		drawString( g2, "Charge Points", chargePointRect.x, chargePointRect.y+titleOffset, Color.BLACK );
+		
+		Rectangle drawAreaRect = makeDrawArea(chargePointRect);
 		
 		int numPoints = getGUI().getChargerSystem().getChargePoints().size();
 		int[] info = makeRectInfo( drawAreaRect, numPoints );
-		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[3] );
-		int i = info[4];
+		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
+		int i = info[3];
 		int count = 0;
 		
-		for ( ChargePoint point : getGUI().getChargerSystem().getChargePoints() )
+		for ( ChargePoint lCPoint : getGUI().getChargerSystem().getChargePoints() )
 		{
-			drawChargePoint( g2, aDeltaTime, point, rect );
+			drawChargePoint( g2, aDeltaTime, lCPoint, rect );
 			
-			rect.x += rect.width + 10;
+			rect.x += rect.width + cellGap;
 			count++;
 			if ( count >= i )
 			{
-				rect.x = 0;
-				rect.y += rect.height + 10;
+				rect.x = cellGap;
+				rect.y += rect.height + cellGap;
 				count = 0;
 			}
 		}
 	}
 	
+	private void carController(Graphics2D g2, double aDeltaTime)
+	{
+		fillRect( g2, carRect, carRectColor );
+		drawString( g2, "Cars", carRect.x, carRect.y+titleOffset, Color.BLACK );
+		
+		Rectangle drawAreaRect = makeDrawArea( carRect );
+
+		int numCars = getGUI().getChargerSystem().getCarAgents().size();
+		int[] info = makeRectInfo( drawAreaRect, numCars );
+		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
+		int i = info[3];
+		int count = 0;
+
+		for ( Car lCar : getGUI().getChargerSystem().getCarAgents() )
+		{
+			if ( getGUI().getChargerSystem().carOnCharge( lCar ) )
+				continue;
+			
+			drawCar( g2, aDeltaTime, lCar, rect );
+			
+			rect.x += rect.width + cellGap;
+			count++;
+			if ( count >= i )
+			{
+				rect.x = cellGap;
+				rect.y += rect.height + cellGap;
+				count = 0;
+			}
+		}
+		
+	}
+	
 	private void drawChargePoint(Graphics2D g2, double aDeltaTime, ChargePoint aPoint, Rectangle aRect)
 	{
+		if ( aPoint.getCar() != null )
+		{
+			if ( aPoint == getGUI().getSelectedChargePoint() )
+				fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+			
+			drawCar( g2, aDeltaTime, aPoint.getCar(), aRect );
+		}
+		else
+		{
+			// draw background
+			if ( aPoint == getGUI().getSelectedChargePoint() )
+				fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+			else
+				fillRect( g2, aRect, new Color( 100,100,100,100 ) );
+			// draw other
+			int xCenter = aRect.x + (aRect.width/2);
+			int yCenter = aRect.y + (aRect.height/2);
+			int barWidth = (int) (aRect.width/1.5);
+			int barHeight = aRect.height/4;
+			Rectangle barRect = new Rectangle();
+			barRect.x = xCenter - ( barWidth/2 );
+			barRect.y = yCenter - ( barHeight/2 );
+			barRect.width = barWidth;
+			barRect.height = barHeight;
+			fillRect( g2, barRect, new Color( 50, 200, 50, 200 ) );
+		}
+		
+		
+	}
+	
+	private void drawCar(Graphics2D g2, double aDeltaTime, Car aCar, Rectangle aRect)
+	{
 		// draw background
-		fillRect( g2, aRect, new Color( 100,100,100,100 ) );
-		// draw state
+		if ( aCar == getGUI().getSelectedCar() )
+			fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+		else
+			fillRect( g2, aRect, new Color( 200,100,100,100 ) );
+		
+		// draw other
+		if ( gui.getChargerSystem().isCharging() )
+		{
+			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, Color.BLACK);
+			
+			aCar.setStartAngle( aCar.getStartAngle() + animateSpeed * aDeltaTime );
+			
+			if ( aCar.getStartAngle() >= 360 )
+				aCar.setStartAngle( aCar.getStartAngle() - 360 );
+		}
+		else
+		{
+			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, Color.RED);
+		}
+		
+		drawStatusCircle( g2, aCar, aRect );
+		drawChargeBar( g2, aCar, aRect );
+		drawString( g2, ""+aCar.getID(), aRect.x, aRect.y+10, Color.DARK_GRAY );
+	}
+	
+	private Rectangle makeDrawArea(Rectangle aRect)
+	{
+		return new Rectangle(aRect.x, aRect.y+titlePadding, aRect.width, aRect.height-titlePadding);
+	}
+	
+	private int[] makeRectInfo(Rectangle aRect, int aNum)
+	{
+		int x = aRect.x + cellGap;
+		int y = aRect.y;
+		
+		int wStart = 81;
+		int w = wStart;
+		
+		boolean fit = false;
+		int numColumns = 0;
+		int numRows = 0;
+		
+		while ( !fit )
+		{
+			w -= 1;
+			numColumns = (int) Math.floor( aRect.width / (w+cellGap) ) - 1;
+			numRows = (int) Math.floor( aRect.height / (w+cellGap) ) - 1;
+			if ( numColumns * numRows >= aNum )
+				fit = true;
+		}
+		
+		int wEnd = w;
+		
+		int[] data = { x, y, w, numColumns }; 
+		return data;
 	}
 	
 	private void drawString(Graphics2D g2, String aString, int x, int y, Color aColor)
 	{
 		g2.setColor(aColor);
 		g2.drawString(aString, x, y);
-	}
-	
-	private void vehicleController(Graphics2D g2, double aDeltaTime)
-	{
-		fillRect( g2, vehicleRect, vehicleRectColor );
-		
-		int titleOffset = 15;
-		int titlePadding = titleOffset+5;
-		Rectangle drawAreaRect = new Rectangle(vehicleRect.x, vehicleRect.y+titlePadding, vehicleRect.width, vehicleRect.height-titlePadding);
-		
-		drawString( g2, "Vehicles", vehicleRect.x, vehicleRect.y+titleOffset, Color.BLACK );
-
-		int numVehicles = getGUI().getChargerSystem().getCarAgents().size();
-		int[] info = makeRectInfo( drawAreaRect, numVehicles );
-		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[3] );
-		int i = info[4];
-		int count = 0;
-
-		for ( Car vehicle : getGUI().getChargerSystem().getCarAgents() )
-		{
-			drawVehicle( g2, aDeltaTime, vehicle, rect );
-			
-			rect.x += rect.width + 10;
-			count++;
-			if ( count >= i )
-			{
-				rect.x = 0;
-				rect.y += rect.height + 10;
-				count = 0;
-			}
-		}
-		
-	}
-	
-	private void drawVehicle(Graphics2D g2, double aDeltaTime, Car aVehicle, Rectangle aRect)
-	{
-		// draw background
-		fillRect( g2, aRect, new Color( 200,100,100,100 ) );
-		// draw state
-	}
-	
-	private int[] makeRectInfo(Rectangle aRect, int aNum)
-	{
-		int x = 0 + aRect.x;
-		int y = 0 + aRect.y;
-		
-		int w = 60;
-		int h = 60;
-		
-		int i = 5;
-		
-		int[] data = { x, y, w, h, i }; 
-		return data;
-	}
-	
-	private void drawCells(Graphics2D g2, double aDeltaTime)
-	{
-		// only recalculate cells if something has changed of this is the first loop
-		// if the number of cells does not match the number of agents is on case of this
-		// TODO a flag will have to be set to say if something else might have changed
-		
-		int numAgents = getGUI().getChargerSystem().getCarAgents().size();
-		int numCells = cells.size();
-		
-		if ( numAgents != numCells )
-		{
-			populateCells(numAgents);
-		}
-		
-		cellColorCurrent = cellColorA;
-		
-		// draw each cell
-		for ( Cell cell : cells )
-		{
-			Color useColor = cellColorCurrent;
-			if ( cell.getCar() != null && getGUI().getSelectedCar() != null && cell.getCar() == getGUI().getSelectedCar() )
-				useColor = cellColorSelected;
-			
-			fillRect( g2, cell.getRect(), useColor );
-			
-			int paddingW = (int) (cell.getW()*0.1);
-			int paddingH = (int) (cell.getH()*0.1);
-			
-			drawAgent( g2, aDeltaTime, cell.getX()+paddingW, cell.getY()+paddingH, cell.getW()-(paddingW*2), cell.getH()-(paddingH*2), cell.getCar(), cell );
-			
-			if ( cellColorCurrent == cellColorA )
-				cellColorCurrent = cellColorB;
-			else
-				cellColorCurrent = cellColorA;
-		}
-		
-		
-	}
-	
-	public void populateCells(int aNumAgents)
-	{
-		cells = new ArrayList<>();
-		
-		int width = getWidth();
-		int height = getHeight();
-		int wantedCellWidth = 100;
-		double cellSizeIncrement = 0.90;
-		
-		int numColumns = (int) Math.floor( width / wantedCellWidth );
-		int numRows = (int) Math.floor( height / wantedCellWidth );
-		
-		int num = numColumns * numRows;
-		boolean a = num < aNumAgents;
-		
-		while ( a )
-		{
-			num = numColumns * numRows;
-			a = num < aNumAgents;
-			
-			wantedCellWidth *= cellSizeIncrement;
-			numColumns = (int) Math.floor( width / wantedCellWidth );
-			numRows = (int) Math.floor( height / wantedCellWidth );
-		}
-		
-		int x = 0;
-		int y = 0;
-		int w = wantedCellWidth;
-		int h = wantedCellWidth;
-		int count = 0;
-		
-		for ( int row = 0; row < numRows; row++ )
-		{
-			for ( int col = 0; col < numColumns; col++ )
-			{
-				Car carAgent = getGUI().getChargerSystem().getCarAgents().get(count);
-				
-				cells.add( new Cell( x, y, w, h, carAgent, 10, wantedCellWidth/100 ) );
-				
-				x += w;
-				count++;
-				
-				if ( count >= aNumAgents )
-					break;
-			}
-			y += h;
-			x = 0;
-			if ( count >= aNumAgents )
-				break;
-		}
 	}
 	
 	private void fillOval(Graphics2D g2, Rectangle aRect, Color aColor)
@@ -300,46 +343,33 @@ public class Canvas extends JPanel
 		g2.fillRect( aRect.x, aRect.y, aRect.width, aRect.height );
 	}
 	
-	private void drawRotatingCircle(Graphics2D g2, int x, int y, int w, int h, int aStarAngle, int aArcAngle, int aStrokeWidth, double aStrokeScale, Color aColor)
+	private void drawRotatingCircle(Graphics2D g2, Rectangle aRect, int aStarAngle, int aArcAngle, int aStrokeWidth, double aStrokeScale, Color aColor)
 	{
 		g2.setColor( aColor );
 		g2.setStroke( new BasicStroke( (int) ( aStrokeWidth * aStrokeScale ) ) );
 		
-		g2.drawArc(x, y, w, h, aStarAngle, aArcAngle);
-		g2.drawArc(x, y, w, h, aStarAngle+90, aArcAngle);
-		g2.drawArc(x, y, w, h, aStarAngle+180, aArcAngle);
-		g2.drawArc(x, y, w, h, aStarAngle+270, aArcAngle);
-	}
-	
-	private void drawAgent(Graphics2D g2, double aDeltaTime, int x, int y, int w, int h, Car aCar, Cell aCell)
-	{
-		if ( gui.getChargerSystem().isCharging() )
-		{
-			double speed = 0.05;
-			
-			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.BLACK);
-			drawStatusCircle( g2, aCar, x, y, w, h );
-			drawChargeBar( g2, aCar, x, y, w, h );
-			
-			aCar.setStartAngle( aCar.getStartAngle() + speed * aDeltaTime );
-			
-			if ( aCar.getStartAngle() >= 360 )
-				aCar.setStartAngle( aCar.getStartAngle() - 360 );
-		}
-		else
-		{
-			drawRotatingCircle(g2, x, y, w, h, (int) aCar.getStartAngle(), 70,  aCell.getStrokeWidth(), aCell.getStrokeScale(), Color.RED);
-		}
+		Rectangle sRect = new Rectangle( aRect.x, aRect.y, aRect.width, aRect.height );
 		
+		int width = (int) (aRect.width * rotatingCircleScale);
+		int height = (int) (aRect.height * rotatingCircleScale);
+		int xDif = aRect.width - width;
+		int yDif = aRect.height - height;
+		int x = aRect.x + ( xDif/2 );
+		int y = aRect.y + ( yDif/2 );
+		
+		g2.drawArc(x, y, width, height, aStarAngle, aArcAngle);
+		g2.drawArc(x, y, width, height, aStarAngle+90, aArcAngle);
+		g2.drawArc(x, y, width, height, aStarAngle+180, aArcAngle);
+		g2.drawArc(x, y, width, height, aStarAngle+270, aArcAngle);
 	}
 	
-	private void drawStatusCircle(Graphics2D g2, Car aCar, int x, int y, int w, int h)
+	private void drawStatusCircle(Graphics2D g2, Car aCar, Rectangle aRect)
 	{
 		Rectangle innerRect = new Rectangle();
-		innerRect.width = w/2;
-		innerRect.height = h/2;
-		innerRect.x = x + (innerRect.width/2);
-		innerRect.y = y + (innerRect.height/2);
+		innerRect.width = aRect.width/2;
+		innerRect.height = aRect.height/2;
+		innerRect.x = aRect.x + (innerRect.width/2);
+		innerRect.y = aRect.y + (innerRect.height/2);
 		
 		if ( aCar.getCarState() == Car.STATE.CHARGE )
 		{
@@ -363,14 +393,14 @@ public class Canvas extends JPanel
 		}
 	}
 	
-	private void drawChargeBar(Graphics2D g2, Car aCar, int x, int y, int w, int h)
+	private void drawChargeBar(Graphics2D g2, Car aCar, Rectangle aRect)
 	{
 		Color back = new Color( 100, 100, 100, 100 );
 		Color fore = new Color( 100, 200, 100, 200 );
-		int xCenter = x + (w/2);
-		int yCenter = y + (h/2);
-		int barWidth = w/5;
-		int barHeight = h/3;
+		int xCenter = aRect.x + (aRect.width/2);
+		int yCenter = aRect.y + (aRect.height/2);
+		int barWidth = aRect.width/5;
+		int barHeight = aRect.height/3;
 		Rectangle barRect = new Rectangle();
 		barRect.x = xCenter - ( barWidth/2 );
 		barRect.y = yCenter - ( barHeight/2 );

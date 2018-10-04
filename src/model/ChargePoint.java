@@ -25,6 +25,16 @@ public class ChargePoint
 		return connectedCar.getID();
 	}
 	
+	public Car getCar()
+	{
+		return connectedCar;
+	}
+	
+	public long getChargeRate()
+	{
+		return chargeRate;
+	}
+	
 	public Car DisconnectCar()
 	{
 		Car lReturn = connectedCar;
