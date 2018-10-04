@@ -248,4 +248,9 @@ public class ChargerSystem
 		return false;
 	}
 	
+	public List<ChargePoint> getChargePoints()
+	{
+		return chargePoints;
+	}
+	
 }
