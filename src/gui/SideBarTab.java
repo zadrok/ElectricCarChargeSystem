@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class SideBarTab extends JPanel
 {
 	protected SideBar sideBar;

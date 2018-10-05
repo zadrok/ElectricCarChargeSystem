@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class SideBarTabChargePoint extends SideBarTab
 {
 	private JLabel carIDTitle;

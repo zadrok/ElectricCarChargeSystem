@@ -1,9 +1,6 @@
 package model;
 
 import jade.core.Agent;
-import java.lang.Thread;
-import java.util.concurrent.atomic.AtomicBoolean;
-import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class Car extends Agent

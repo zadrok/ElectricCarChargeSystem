@@ -2,6 +2,7 @@ package model;
 
 import jade.core.Agent;
 
+@SuppressWarnings("serial")
 public class MasterScheduler extends Agent
 {
 	private MasterSchedulerBehaviourBasic MSBehaviour;

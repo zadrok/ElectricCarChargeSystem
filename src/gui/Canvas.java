@@ -5,22 +5,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.*;
 import model.*;
-import java.util.Random;
 
 @SuppressWarnings("serial")
 public class Canvas extends JPanel
 {
 	private GUI gui;
 	private CanvasLooper looper;
-	private Color cellColorA;
-	private Color cellColorB;
-	private Color cellColorCurrent;
-	private Color cellColorSelected;
-	Random random = new Random();
 	private Rectangle chargePointRect;
 	private Rectangle carRect;
-	private Color chargePointRectColor;
-	private Color carRectColor;
 	private double screenSplit;
 	private int titleOffset;
 	private int titlePadding;
@@ -48,17 +40,6 @@ public class Canvas extends JPanel
 		cellGap = 10;
 		
 		addMouseListener( mouseListener() );
-		
-		chargePointRectColor = new Color( 50, 100, 50, 50 );
-		carRectColor = new Color( 100, 50, 50, 50 );
-		
-		int a = 240;
-		cellColorA = new Color(a,a,a);
-		int b = 230;
-		cellColorB = new Color(b,b,b);
-		cellColorCurrent = cellColorA;
-		int c = 180;
-		cellColorSelected = new Color(c,c,c);
 	}
 	
 	public void updateSize(int x, int y, int width, int height)
@@ -167,7 +148,7 @@ public class Canvas extends JPanel
 		double deltaTime = looper.getDeltaTime();
 		
 		// clear screen white
-		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), Color.WHITE );
+		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), ColorIndex.canvasFill );
 		
 		chargePointController(g2,deltaTime);
 		carController(g2,deltaTime);
@@ -175,8 +156,8 @@ public class Canvas extends JPanel
 	
 	private void chargePointController(Graphics2D g2, double aDeltaTime)
 	{
-		fillRect( g2, chargePointRect, chargePointRectColor );
-		drawString( g2, "Charge Points", chargePointRect.x, chargePointRect.y+titleOffset, Color.BLACK );
+		fillRect( g2, chargePointRect, ColorIndex.chargePointRect );
+		drawString( g2, "Charge Points", chargePointRect.x, chargePointRect.y+titleOffset, ColorIndex.chargePointRectTitle );
 		
 		Rectangle drawAreaRect = makeDrawArea(chargePointRect);
 		
@@ -203,8 +184,8 @@ public class Canvas extends JPanel
 	
 	private void carController(Graphics2D g2, double aDeltaTime)
 	{
-		fillRect( g2, carRect, carRectColor );
-		drawString( g2, "Cars", carRect.x, carRect.y+titleOffset, Color.BLACK );
+		fillRect( g2, carRect, ColorIndex.carRect );
+		drawString( g2, "Cars", carRect.x, carRect.y+titleOffset, ColorIndex.carRectTitle );
 		
 		Rectangle drawAreaRect = makeDrawArea( carRect );
 
@@ -230,7 +211,6 @@ public class Canvas extends JPanel
 				count = 0;
 			}
 		}
-		
 	}
 	
 	private void drawChargePoint(Graphics2D g2, double aDeltaTime, ChargePoint aPoint, Rectangle aRect)
@@ -238,7 +218,7 @@ public class Canvas extends JPanel
 		if ( aPoint.getCar() != null )
 		{
 			if ( aPoint == getGUI().getSelectedChargePoint() )
-				fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+				fillRect( g2, aRect, ColorIndex.selectedChargePointCell );
 			
 			drawCar( g2, aDeltaTime, aPoint.getCar(), aRect );
 		}
@@ -246,9 +226,9 @@ public class Canvas extends JPanel
 		{
 			// draw background
 			if ( aPoint == getGUI().getSelectedChargePoint() )
-				fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+				fillRect( g2, aRect, ColorIndex.selectedChargePointCell );
 			else
-				fillRect( g2, aRect, new Color( 100,100,100,100 ) );
+				fillRect( g2, aRect, ColorIndex.chargePointCell );
 			// draw other
 			int xCenter = aRect.x + (aRect.width/2);
 			int yCenter = aRect.y + (aRect.height/2);
@@ -259,7 +239,7 @@ public class Canvas extends JPanel
 			barRect.y = yCenter - ( barHeight/2 );
 			barRect.width = barWidth;
 			barRect.height = barHeight;
-			fillRect( g2, barRect, new Color( 50, 200, 50, 200 ) );
+			fillRect( g2, barRect, ColorIndex.chargePointEmptyBar );
 		}
 		
 		
@@ -269,14 +249,14 @@ public class Canvas extends JPanel
 	{
 		// draw background
 		if ( aCar == getGUI().getSelectedCar() )
-			fillRect( g2, aRect, new Color( 200,100,200,100 ) );
+			fillRect( g2, aRect, ColorIndex.selectedCarCell );
 		else
-			fillRect( g2, aRect, new Color( 200,100,100,100 ) );
+			fillRect( g2, aRect, ColorIndex.carCell );
 		
 		// draw other
 		if ( gui.getChargerSystem().isCharging() )
 		{
-			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, Color.BLACK);
+			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, ColorIndex.rotatingCircleNormal);
 			
 			aCar.setStartAngle( aCar.getStartAngle() + animateSpeed * aDeltaTime );
 			
@@ -285,12 +265,12 @@ public class Canvas extends JPanel
 		}
 		else
 		{
-			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, Color.RED);
+			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, ColorIndex.rotatingCircleError);
 		}
 		
 		drawStatusCircle( g2, aCar, aRect );
 		drawChargeBar( g2, aCar, aRect );
-		drawString( g2, ""+aCar.getID(), aRect.x, aRect.y+10, Color.DARK_GRAY );
+		drawString( g2, ""+aCar.getID(), aRect.x, aRect.y+10, ColorIndex.carID );
 	}
 	
 	private Rectangle makeDrawArea(Rectangle aRect)
@@ -373,30 +353,28 @@ public class Canvas extends JPanel
 		
 		if ( aCar.getCarState() == Car.STATE.CHARGE )
 		{
-			fillOval( g2, innerRect, Color.ORANGE );
+			fillOval( g2, innerRect, ColorIndex.carStateCharge );
 		}
 		else if ( aCar.getCarState() == Car.STATE.IDLE )
 		{
-			fillOval( g2, innerRect, Color.YELLOW );
+			fillOval( g2, innerRect, ColorIndex.carStateIdle );
 		}
 		else if ( aCar.getCarState() == Car.STATE.CHARGING)
 		{
-			fillOval( g2, innerRect, Color.GREEN );
+			fillOval( g2, innerRect, ColorIndex.carStateCharging );
 		}
 		else if ( aCar.getCarState() == Car.STATE.BURN)
 		{
-			fillOval( g2, innerRect, Color.MAGENTA );
+			fillOval( g2, innerRect, ColorIndex.carStateBurn );
 		}
 		else
 		{
-			fillOval( g2, innerRect, Color.RED );
+			fillOval( g2, innerRect, ColorIndex.carStateError );
 		}
 	}
 	
 	private void drawChargeBar(Graphics2D g2, Car aCar, Rectangle aRect)
 	{
-		Color back = new Color( 100, 100, 100, 100 );
-		Color fore = new Color( 100, 200, 100, 200 );
 		int xCenter = aRect.x + (aRect.width/2);
 		int yCenter = aRect.y + (aRect.height/2);
 		int barWidth = aRect.width/5;
@@ -406,21 +384,14 @@ public class Canvas extends JPanel
 		barRect.y = yCenter - ( barHeight/2 );
 		barRect.width = barWidth;
 		barRect.height = barHeight;
-		fillRect( g2, barRect, back );
+		fillRect( g2, barRect, ColorIndex.carChargeBarBackground );
 		double current = aCar.getCurrentCharge();
 		double max = aCar.getMaxChargeCapacity();
 		double chargePercentage = 1 - ( current / max );
 		int remove = (int) (barRect.height * chargePercentage);
 		barRect.y += remove;
 		barRect.height -= remove;
-		fillRect( g2, barRect, fore );
-	}
-	
-	public Color getRandomColor()
-	{
-		int a = 200;
-		int b = 40;
-		return new Color( random.nextInt(a)+b, random.nextInt(a)+b, random.nextInt(a)+b );
+		fillRect( g2, barRect, ColorIndex.carChargeBarForeground );
 	}
 	
 	public void startLooper()

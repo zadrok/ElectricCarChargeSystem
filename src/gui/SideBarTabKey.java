@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class SideBarTabKey extends SideBarTab
 {
 

@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import boot.GlobalVariables;
 
+@SuppressWarnings("serial")
 public class SideBarTabOptions extends SideBarTab
 {
 	private ActionListener al;
@@ -130,7 +131,7 @@ public class SideBarTabOptions extends SideBarTab
 				}
 				else if ( e.getSource() == createNewCarCustom )
 				{
-					System.out.println( "TODO - open dialog asking user input" );
+					getGUI().showDialogCreateCar();
 				}
 			}
 		};
@@ -154,7 +155,7 @@ public class SideBarTabOptions extends SideBarTab
 				}
 				else if ( e.getSource() == createNewChargePointCustom )
 				{
-					System.out.println( "TODO - open dialog asking user input" );
+					getGUI().showDialogCreateChargePoint();
 				}
 			}
 		};

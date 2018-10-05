@@ -147,6 +147,7 @@ public class ChargerSystem
 		
 		try
 		{
+			@SuppressWarnings("serial")
 			OneShotBehaviour behaviour = ( new OneShotBehaviour() 
 			{
 				public void action() 
@@ -180,6 +181,7 @@ public class ChargerSystem
 		
 		try
 		{
+			@SuppressWarnings("serial")
 			OneShotBehaviour behaviour = ( new OneShotBehaviour() 
 			{
 				public void action() 

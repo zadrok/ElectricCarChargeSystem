@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -8,7 +7,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-import boot.GlobalVariables;
 import jade.wrapper.gateway.JadeGateway;
 import model.*;
 
@@ -18,17 +16,14 @@ public class GUI
 	private String windowTitle;
 	private int windowWidth;
 	private int windowHegiht;
-	private Color windowColor;
-	
 	private MenuBar menuBar;
-	
 	private ChargerSystem chargeSys;
-	
 	private Canvas canvas;
 	private SideBar sideBar;
-	
 	private Car selectedCar;
 	private ChargePoint selectedChargePoint;
+	private DialogCreateCar dialogCreateCar;
+	private DialogCreateChargePoint dialogCreateChargePoint;
 	
 	public GUI( ChargerSystem aChargeSystem )
 	{
@@ -37,13 +32,12 @@ public class GUI
 		windowTitle = "Electric Car Charge System";
 		windowWidth = 1280;
 		windowHegiht = 720;
-		windowColor = Color.WHITE;
 		selectedCar = null;
 		selectedChargePoint = null;
 		
 		frame = new JFrame(windowTitle);
 		frame.setSize(windowWidth,windowHegiht);
-		frame.setBackground(windowColor);
+		frame.setBackground(ColorIndex.window);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 	    frame.addWindowListener( customWindowAdapter() );
@@ -52,15 +46,15 @@ public class GUI
 		frame.add( menuBar );
 		frame.setJMenuBar(menuBar);
 		
-		
 		int sideBarWidth = windowWidth/3;
 		sideBar = new SideBar( this, 0, 0, sideBarWidth, windowHegiht );
 		canvas = new Canvas( this, sideBarWidth, 0, windowWidth-sideBarWidth, windowHegiht );
 		
-		
 		frame.add( sideBar );
 		frame.add( canvas );
 		
+		dialogCreateCar = new DialogCreateCar(this);
+		dialogCreateChargePoint = new DialogCreateChargePoint(this);
 		
 		frame.setLayout(null);
 		frame.setVisible(true);
@@ -78,6 +72,16 @@ public class GUI
 		
 	}
 	
+	public void showDialogCreateCar()
+	{
+		dialogCreateCar.setVisible(true);
+	}
+	
+	public void showDialogCreateChargePoint()
+	{
+		dialogCreateChargePoint.setVisible(true);
+	}
+	
 	public void startDrawLoop()
 	{
 		canvas.startLooper();
@@ -92,6 +96,11 @@ public class GUI
 	{
 		frame.validate();
 		frame.repaint();
+	}
+	
+	public JFrame getFrame()
+	{
+		return frame;
 	}
 	
 	private WindowAdapter customWindowAdapter()

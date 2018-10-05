@@ -2,8 +2,7 @@ package gui;
 
 import javax.swing.*;
 
-import model.Car;
-
+@SuppressWarnings("serial")
 public class SideBarTabCar extends SideBarTab
 {
 	private JLabel idTitle;
