@@ -14,6 +14,14 @@ public class GlobalVariables
 	public static boolean drawLoop;
 	public static int drawFrameRate;
 	
+	public static int carBatterySizeSmall;
+	public static int carBatterySizeMedium;
+	public static int carBatterySizeLarge;
+	
+	public static int chargePointChargeRateSizeSmall;
+	public static int chargePointChargeRateSizeMedium;
+	public static int chargePointChargeRateSizeLarge;
+	
 	
 	// add variables here to get information from settings file
 	private static void applySettings(JsonObject obj)
@@ -22,6 +30,14 @@ public class GlobalVariables
 		chargeInterval = obj.get("chargeInterval").getAsLong();
 		drawLoop = obj.get("drawLoop").getAsBoolean();
 		drawFrameRate = obj.get("drawFrameRate").getAsInt();
+		
+		carBatterySizeSmall = obj.get("carBatterySizeSmall").getAsInt();
+		carBatterySizeMedium = obj.get("carBatterySizeMedium").getAsInt();
+		carBatterySizeLarge = obj.get("carBatterySizeLarge").getAsInt();
+		
+		chargePointChargeRateSizeSmall = obj.get("chargePointChargeRateSizeSmall").getAsInt();
+		chargePointChargeRateSizeMedium = obj.get("chargePointChargeRateSizeMedium").getAsInt();
+		chargePointChargeRateSizeLarge = obj.get("chargePointChargeRateSizeLarge").getAsInt();
 	}
 	
 	

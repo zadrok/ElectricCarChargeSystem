@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import boot.GlobalVariables;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -62,16 +63,11 @@ public class ChargerSystem
 		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
 		chargeThread = new ChargeThread(chargePoints, 1000);
 		chargeThreadThread = new Thread(chargeThread);
-		chargeThread.add(new ChargePoint(50));
-		chargeThread.add(new ChargePoint(50));
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 		chargeThreadThread.start();
-		chargeThread.add(new ChargePoint(50));
-		chargeThread.add(new ChargePoint(50));
-	}
-	
-	public void createChargePoint(int aChargeRate)
-	{
-		chargeThread.add( new ChargePoint( aChargeRate ) );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 	}
 	
 	public void initJadeAgents()
@@ -94,7 +90,7 @@ public class ChargerSystem
 		
 		for ( int i = 0; i < 10; i++ )
 		{
-			int max = 1000;
+			int max = GlobalVariables.carBatterySizeSmall;
 			int base = 100;
 			int current = random.nextInt( max - base ) + base;
 			createCarAgent( max, current );
@@ -117,6 +113,11 @@ public class ChargerSystem
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void createChargePoint(int aChargeRate)
+	{
+		chargeThread.add( new ChargePoint( aChargeRate ) );
 	}
 	
 	public void createCarAgent( long aMaxchargeCapacity, long aCurrentcharge )

@@ -2,5 +2,11 @@
 	"outlets": 50,
 	"chargeInterval": 30,
 	"drawLoop": true,
-	"drawFrameRate": 20
+	"drawFrameRate": 20,
+	"carBatterySizeSmall": 1000,
+	"carBatterySizeMedium": 5000,
+	"carBatterySizeLarge": 10000,
+	"chargePointChargeRateSizeSmall": 50,
+	"chargePointChargeRateSizeMedium": 100,
+	"chargePointChargeRateSizeLarge": 200
 }
