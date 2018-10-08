@@ -125,6 +125,8 @@ public class Car extends Agent
 	
 	public void discharge()
 	{
+		if(carState == STATE.CHARGING)
+			return;
 		setCurrentCharge(getCurrentCharge() - dischargeRate);
 		if(currentCharge < (maxChargeCapacity / 10))
 		{

@@ -43,6 +43,10 @@ public class CarBehaviourBasic extends CyclicBehaviour
 					
 				}
 			}
+			else if(msg.getContent().startsWith("mayCharge"))
+			{
+				
+			}
 			
 //			ACLMessage reply = msg.createReply();
 //			reply.setPerformative( ACLMessage.INFORM );

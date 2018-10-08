@@ -248,12 +248,13 @@ public class ChargerSystem
 			if(a.car().getID() == aCar.getID())
 				return false;
 		}
-		long timeMinutes = System.currentTimeMillis()/60000;
-		chargeQueue.add(new Tuple<Car, Long, Long>(aCar, timeMinutes+aTimeStart, timeMinutes+aTimeStart+aTimePeriod));
+		long tryStartTime = aTimeStart + getTimeSeconds();
+		System.out.println("Charging at " + tryStartTime + " for " + aTimePeriod);
+		chargeQueue.add(new Tuple<Car, Long, Long>(aCar, tryStartTime, aTimePeriod));
 		return true;
 	}
 	
-	public boolean tryChargeCar(Car aCar)
+	private boolean tryChargeCar(Car aCar)
 	{
 		for(ChargePoint a : chargePoints)
 		{
@@ -269,6 +270,11 @@ public class ChargerSystem
 	public List<ChargePoint> getChargePoints()
 	{
 		return chargePoints;
+	}
+	
+	private long getTimeSeconds()
+	{
+		return System.currentTimeMillis()/1000;
 	}
 	
 }

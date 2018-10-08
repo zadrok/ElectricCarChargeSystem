@@ -49,6 +49,10 @@ public class ChargePoint
 		{
 			long lTotalCharge = connectedCar.getCurrentCharge() + chargeRate;
 			connectedCar.setCurrentCharge(lTotalCharge > connectedCar.getMaxChargeCapacity() ? connectedCar.getMaxChargeCapacity() : lTotalCharge);
+			if(connectedCar.getCurrentCharge() == connectedCar.getMaxChargeCapacity())
+			{
+				DisconnectCar();
+			}
 //			System.out.println("Charged car " + connectedCar.getID() + " to charge " + connectedCar.getCurrentCharge());
 		}
 		else

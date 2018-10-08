@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -26,10 +28,32 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			
 			if ( msg.getContent().startsWith( "wantCharge" ) )
 			{
-				//boolean response = masSch.getChargerSystem().requestCharge(msg.getSender().getClass());
 				ACLMessage reply = msg.createReply();
 				reply.setPerformative( ACLMessage.INFORM );
-				reply.setContent( "wantCharge ok" );
+				reply.setContent( "wantCharge fail" );
+				ArrayList<Car> cars = masSch.getChargerSystem().getCarAgents();
+				for(Car car : cars)
+				{
+					if(car.getAID().getLocalName().equals(msg.getSender().getLocalName()))
+					{
+						String[] split = msg.getContent().split("\\s+");
+						for(int i = 0; i < split.length; ++i)
+						{
+							if(split[i].equals("--time"))
+							{
+								String start = split.length >= i+1 ? split[i+1] : "00:00";
+								String end = split.length >= i+2 ? split[i+2] : "06:00";
+								String[] valStart = start.split(":");
+								String[] valEnd = end.split(":");
+								if(masSch.getChargerSystem().requestCharge(car, Integer.parseInt(valStart[0])*60 + Integer.parseInt(valStart[1]), Integer.parseInt(valEnd[0])*60 + Integer.parseInt(valEnd[1])))
+								{
+									reply.setContent( "wantCharge ok" );
+								}
+							}
+						}
+					}
+				}
+				
 				masSch.send( reply );
 			}
 			
