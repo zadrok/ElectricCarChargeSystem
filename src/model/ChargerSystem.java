@@ -254,7 +254,7 @@ public class ChargerSystem
 		return true;
 	}
 	
-	private boolean tryChargeCar(Car aCar)
+	public boolean tryChargeCar(Car aCar, long chargeTime)
 	{
 		for(ChargePoint a : chargePoints)
 		{
@@ -272,7 +272,12 @@ public class ChargerSystem
 		return chargePoints;
 	}
 	
-	private long getTimeSeconds()
+	public List<Tuple<Car, Long, Long>> getChargeQueue()
+	{
+		return chargeQueue;
+	}
+	
+	public long getTimeSeconds()
 	{
 		return System.currentTimeMillis()/1000;
 	}

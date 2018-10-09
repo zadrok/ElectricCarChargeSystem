@@ -1,9 +1,11 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import model.ChargerSystem.Tuple;
 
 @SuppressWarnings("serial")
 public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
@@ -18,7 +20,7 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 	@Override
 	public void action() 
 	{
-		ACLMessage msg = masSch.blockingReceive();
+		ACLMessage msg = masSch.blockingReceive(200);
 		if ( msg != null )
 		{
 			// Handle message
@@ -58,9 +60,15 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			}
 			
 		}
-		else
+		
+		List<Tuple<Car, Long, Long>> queue = masSch.getChargerSystem().getChargeQueue();
+		for(int i = queue.size()-1; i >= 0; --i)
 		{
-			Thread.yield();
+			if(masSch.getChargerSystem().getTimeSeconds() >= queue.get(i).timeStart())
+			{
+				if(masSch.getChargerSystem().tryChargeCar(queue.get(i).car(), queue.get(i).timeEnd()))
+					queue.remove(i);
+			}
 		}
 	}
 	

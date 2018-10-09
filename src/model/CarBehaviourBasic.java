@@ -19,7 +19,7 @@ public class CarBehaviourBasic extends CyclicBehaviour
 	@Override
 	public void action() 
 	{	
-		ACLMessage msg = car.blockingReceive(1000);
+		ACLMessage msg = car.blockingReceive(100);
 
 		if ( msg != null )
 		{
@@ -62,7 +62,7 @@ public class CarBehaviourBasic extends CyclicBehaviour
 			car.send( newMSG );
 		}
     
-		if(System.currentTimeMillis() - lastDischarge > 1000)
+		if(System.currentTimeMillis() - lastDischarge > 500)
 		{
 			lastDischarge = System.currentTimeMillis();
 			car.discharge();
