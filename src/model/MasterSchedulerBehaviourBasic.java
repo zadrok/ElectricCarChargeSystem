@@ -61,15 +61,7 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			
 		}
 		
-		List<Tuple<Car, Long, Long>> queue = masSch.getChargerSystem().getChargeQueue();
-		for(int i = queue.size()-1; i >= 0; --i)
-		{
-			if(masSch.getChargerSystem().getTimeSeconds() >= queue.get(i).timeStart())
-			{
-				if(masSch.getChargerSystem().tryChargeCar(queue.get(i).car(), queue.get(i).timeEnd()))
-					queue.remove(i);
-			}
-		}
+		masSch.getScheduleAlgorithm().run();
 	}
 	
 	@Override
