@@ -11,6 +11,9 @@ public class SideBarTabChargePoint extends SideBarTab
 	private JLabel chargeRateIDTitle;
 	private JLabel chargeRateIDInfo;
 	
+	private JLabel chargeTimeLeftTitle;
+	private JLabel chargeTimeLeftInfo;
+	
 	public SideBarTabChargePoint(SideBar aSideBar)
 	{
 		super(aSideBar);
@@ -26,11 +29,19 @@ public class SideBarTabChargePoint extends SideBarTab
 		chargeRateIDTitle.setBounds(rightMargin, yOffset, width, height);
 		chargeRateIDInfo = new JLabel("###");
 		chargeRateIDInfo.setBounds(rightMargin+xInfoOffset, yOffset, width, height);
+
+		yOffset += yOffsetIncrement;
+		chargeTimeLeftTitle = new JLabel("Charge time remaininge:");
+		chargeTimeLeftTitle.setBounds(rightMargin, yOffset, width, height);
+		chargeTimeLeftInfo = new JLabel("###");
+		chargeTimeLeftInfo.setBounds(rightMargin+xInfoOffset, yOffset, width, height);
 		
 		add(carIDTitle);
 		add(carIDInfo);
 		add(chargeRateIDTitle);
 		add(chargeRateIDInfo);
+		add(chargeTimeLeftTitle);
+		add(chargeTimeLeftInfo);
 		
 	}
 	
@@ -38,8 +49,12 @@ public class SideBarTabChargePoint extends SideBarTab
 	{
 		if ( getGUI().getSelectedChargePoint() != null )
 		{
-			carIDInfo.setText("" + getGUI().getSelectedChargePoint().GetConnectedCar());
-			chargeRateIDInfo.setText("" + getGUI().getSelectedChargePoint().getChargeRate());
+			carIDInfo.setText(String.format("%d", getGUI().getSelectedChargePoint().GetConnectedCar()));
+			chargeRateIDInfo.setText(String.format("%.3f", getGUI().getSelectedChargePoint().getChargeRate()));
+			if(getGUI().getSelectedChargePoint().GetConnectedCar() != -1)
+				chargeTimeLeftInfo.setText(String.format("%d minutes", getGUI().getSelectedChargePoint().GetTimeRemaining()));
+			else
+				chargeTimeLeftInfo.setText("0");
 
 		}
 	}

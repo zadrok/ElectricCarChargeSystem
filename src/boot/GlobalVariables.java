@@ -10,7 +10,7 @@ import com.google.gson.*;
 public class GlobalVariables 
 {
 	public static long outlets;
-	public static long chargeInterval; // in minutes
+	public static int chargeInterval; // in minutes
 	public static boolean drawLoop;
 	public static int drawFrameRate;
 	
@@ -27,7 +27,7 @@ public class GlobalVariables
 	private static void applySettings(JsonObject obj)
 	{
 		outlets = obj.get("outlets").getAsLong();
-		chargeInterval = obj.get("chargeInterval").getAsLong();
+		chargeInterval = obj.get("chargeInterval").getAsInt();
 		drawLoop = obj.get("drawLoop").getAsBoolean();
 		drawFrameRate = obj.get("drawFrameRate").getAsInt();
 		

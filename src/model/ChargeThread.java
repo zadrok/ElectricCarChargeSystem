@@ -8,14 +8,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 	public class ChargeThread implements Runnable
 	{
 		private List<ChargePoint> chargePoints;
-		private int chargePeriod;
+		private int pollRate;
+		private long lastPoll;
 		private AtomicBoolean stop;
 		
-		public ChargeThread(List<ChargePoint> aChargers, int aChargePeriod)
+		public ChargeThread(List<ChargePoint> aChargers, int aPollRate)
 		{
 			stop = new AtomicBoolean(false);
 			chargePoints = Collections.synchronizedList(aChargers);
-			chargePeriod = aChargePeriod;
+			pollRate = aPollRate;
+			lastPoll = System.currentTimeMillis();
 		}
 		
 		public void add(ChargePoint aCharger)
@@ -46,29 +48,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 			return false;
 		}
 		
-		public boolean attachCar(Car aCar)
-		{
-			for(int i = 0; i < chargePoints.size(); ++i)
-			{
-				if(chargePoints.get(i).GetConnectedCar() == -1)
-				{
-					chargePoints.get(i).AddCar(aCar);
-					return true;
-				}
-			}
-			return false;
-		}
-		
 		public void run()
 		{
 			while(!stop.get())
 			{
-				// Sleep for given period of time
-				try {
-					Thread.sleep(chargePeriod);
-				} catch (InterruptedException e) {
-					return;
-				}
 				// Increment car charge
 				synchronized(chargePoints)
 				{
@@ -79,6 +62,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //						System.out.println("Charging at point " + i);
 						chargePoints.get(i).performCharge();
 					}
+				}
+				long pollDelay = (1000/pollRate) - (System.currentTimeMillis() - lastPoll);
+				lastPoll = System.currentTimeMillis() + pollDelay;
+				// Sleep for given period of time
+				try {
+					Thread.sleep(pollDelay < 0 ? 0 : pollDelay);
+				} catch (InterruptedException e) {
+					return;
 				}
 			}
 		}

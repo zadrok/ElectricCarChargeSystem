@@ -61,7 +61,7 @@ public class ChargerSystem
 		random = new Random();
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
 		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
-		chargeThread = new ChargeThread(chargePoints, 1000);
+		chargeThread = new ChargeThread(chargePoints, GlobalVariables.chargeInterval);
 		chargeThreadThread = new Thread(chargeThread);
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
@@ -91,7 +91,7 @@ public class ChargerSystem
 		for ( int i = 0; i < 10; i++ )
 		{
 			int max = GlobalVariables.carBatterySizeSmall;
-			int base = 100;
+			int base = 0;
 			int current = random.nextInt( max - base ) + base;
 			createCarAgent( max, current );
 		}
@@ -260,7 +260,7 @@ public class ChargerSystem
 		{
 			if(a.GetConnectedCar() == -1)
 			{
-				a.AddCar(aCar);
+				a.AddCar(aCar, chargeTime);
 				return true;
 			}
 		}
