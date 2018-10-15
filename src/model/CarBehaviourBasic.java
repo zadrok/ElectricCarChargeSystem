@@ -1,5 +1,6 @@
 package model;
 
+import boot.GlobalVariables;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -57,14 +58,15 @@ public class CarBehaviourBasic extends CyclicBehaviour
 		if ( car.isWantCharge() )
 		{
 			ACLMessage newMSG = new ACLMessage( ACLMessage.INFORM );
-			newMSG.setContent( "wantCharge --time 00:00 06:00" );
+			newMSG.setContent( "wantCharge --time 00:00 01:00" );
 			newMSG.addReceiver( new AID( "Master Scheduler", AID.ISLOCALNAME ) );
 			car.send( newMSG );
 		}
     
-		if(System.currentTimeMillis() - lastDischarge > 500)
+		long pollDelay = (1000/GlobalVariables.chargeInterval) - (System.currentTimeMillis() - lastDischarge);
+		if(pollDelay < 0)
 		{
-			lastDischarge = System.currentTimeMillis();
+			lastDischarge = System.currentTimeMillis() + pollDelay;
 			car.discharge();
 		}
 	}

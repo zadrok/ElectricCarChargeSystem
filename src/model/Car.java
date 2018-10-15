@@ -1,6 +1,11 @@
 package model;
 
+import boot.GlobalVariables;
 import jade.core.Agent;
+
+// Cars typically range from around 20kWh (~120km / charge) to
+// 90 kWh (~360km / charge).
+// This equates to a discharge of around 8kWh / hour.
 
 @SuppressWarnings("serial")
 public class Car extends Agent
@@ -8,9 +13,9 @@ public class Car extends Agent
 	public static enum STATE { NONE, IDLE, CHARGE, CHARGING, BURN };
 
 	private long id;
-	private long maxChargeCapacity;
-	private long currentCharge;
-	private long dischargeRate;
+	private double maxChargeCapacity;
+	private double currentCharge;
+	private double dischargeRate;
 
 	private boolean wantCharge;
 	private boolean waitingForCharge;
@@ -27,9 +32,9 @@ public class Car extends Agent
 		wantCharge = false;
 		waitingForCharge = false;
 		id = -1;
-		maxChargeCapacity = 1000;
-		currentCharge = 1000;
-		dischargeRate = 10;
+		maxChargeCapacity = 70;
+		currentCharge = 70;
+		dischargeRate = (8.0/60.0)/GlobalVariables.chargeInterval;
 		carState = STATE.IDLE;
 		startAngle = 0;
 	}
@@ -77,7 +82,7 @@ public class Car extends Agent
 		id = aID;
 	}
 
-	public long getMaxChargeCapacity()
+	public double getMaxChargeCapacity()
 	{
 		return maxChargeCapacity;
 	}
@@ -87,12 +92,12 @@ public class Car extends Agent
 		maxChargeCapacity = aMaxchargeCapacity;
 	}
 
-	public long getCurrentCharge()
+	public double getCurrentCharge()
 	{
 		return currentCharge;
 	}
 
-	public void setCurrentCharge(long aCurrentcharge)
+	public void setCurrentCharge(double aCurrentcharge)
 	{
 		currentCharge = Math.max(0, Math.min(maxChargeCapacity, aCurrentcharge));
 	}

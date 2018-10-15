@@ -145,6 +145,8 @@ public class GUI
 	public void setSelectedChargePoint(ChargePoint aChargePoint)
 	{
 		selectedChargePoint = aChargePoint;
+		if(aChargePoint.GetConnectedCar() != -1)
+			setSelectedCar(aChargePoint.getCar());
 	}
 	
 }

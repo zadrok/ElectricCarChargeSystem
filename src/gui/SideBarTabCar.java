@@ -61,8 +61,8 @@ public class SideBarTabCar extends SideBarTab
 		if ( getGUI().getSelectedCar() != null )
 		{
 			idInfo.setText("" + getGUI().getSelectedCar().getID());
-			maxChargeCapacityInfo.setText("" + getGUI().getSelectedCar().getMaxChargeCapacity());
-			currentChargeInfo.setText("" + getGUI().getSelectedCar().getCurrentCharge());
+			maxChargeCapacityInfo.setText(String.format("%.3f", getGUI().getSelectedCar().getMaxChargeCapacity()));
+			currentChargeInfo.setText(String.format("%.3f", getGUI().getSelectedCar().getCurrentCharge()));
 			carStateInfo.setText("" + getGUI().getSelectedCar().getCarStateString() );
 
 		}
