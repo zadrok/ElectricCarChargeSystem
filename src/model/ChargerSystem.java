@@ -63,11 +63,7 @@ public class ChargerSystem
 		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
 		chargeThread = new ChargeThread(chargePoints, GlobalVariables.chargeInterval);
 		chargeThreadThread = new Thread(chargeThread);
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 		chargeThreadThread.start();
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 	}
 	
 	public void initJadeAgents()
@@ -100,6 +96,14 @@ public class ChargerSystem
 //		messageMasterScheduler(ACLMessage.INFORM, "Master Scheduler");
 	}
 	
+	public void initChargerPoints()
+	{
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeMedium );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge );
+		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
+	}
+	
 	public void createMasterScheduler()
 	{
 		try
@@ -117,7 +121,7 @@ public class ChargerSystem
 	
 	public void createChargePoint(int aChargeRate)
 	{
-		chargeThread.add( new ChargePoint( aChargeRate ) );
+		chargeThread.add( new ChargePoint( aChargeRate, masterSchedulerAgent ) );
 	}
 	
 	public void createCarAgent( long aMaxchargeCapacity, long aCurrentcharge )

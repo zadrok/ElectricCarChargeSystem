@@ -13,6 +13,7 @@ public class Main
 		jade.Boot.main(new String[] {"-gui"}); //start jade
 		ChargerSystem charSys = new ChargerSystem();
 		charSys.initJadeAgents();
+		charSys.initChargerPoints();
 		GUI gui = new GUI( charSys );
 		gui.startDrawLoop();
 	}
