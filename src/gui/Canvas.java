@@ -1,3 +1,10 @@
+/*************************
+ * Canvas.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import java.awt.*;

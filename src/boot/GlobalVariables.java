@@ -1,3 +1,11 @@
+/*************************
+ * GlobalVariables.java
+ * 
+ * Global variables are used for behaviour that exists throughout
+ * the entire program. This also will parse the settings Json file
+ * 
+ */
+
 package boot;
 
 import java.io.*;
@@ -22,6 +30,8 @@ public class GlobalVariables
 	public static int chargePointChargeRateSizeMedium;
 	public static int chargePointChargeRateSizeLarge;
 	
+	public static double timeScale;
+	
 	
 	// add variables here to get information from settings file
 	private static void applySettings(JsonObject obj)
@@ -38,6 +48,8 @@ public class GlobalVariables
 		chargePointChargeRateSizeSmall = obj.get("chargePointChargeRateSizeSmall").getAsInt();
 		chargePointChargeRateSizeMedium = obj.get("chargePointChargeRateSizeMedium").getAsInt();
 		chargePointChargeRateSizeLarge = obj.get("chargePointChargeRateSizeLarge").getAsInt();
+		
+		timeScale = 60.0;
 	}
 	
 	

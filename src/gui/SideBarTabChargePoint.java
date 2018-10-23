@@ -1,3 +1,10 @@
+/*************************
+ * SideBarTabChargePoint.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import javax.swing.JLabel;

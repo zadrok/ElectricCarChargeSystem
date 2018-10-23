@@ -1,3 +1,10 @@
+/*************************
+ * ColorIndex.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import java.awt.Color;

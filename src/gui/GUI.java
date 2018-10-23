@@ -1,3 +1,10 @@
+/*************************
+ * GUI.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import java.awt.event.ComponentAdapter;

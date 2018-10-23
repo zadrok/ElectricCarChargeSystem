@@ -1,3 +1,10 @@
+/*************************
+ * SideBar.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import java.awt.*;

@@ -1,3 +1,10 @@
+/*************************
+ * SideBarTab.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import javax.swing.JPanel;

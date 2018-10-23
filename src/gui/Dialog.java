@@ -1,3 +1,10 @@
+/*************************
+ * Dialog.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import javax.swing.*;
