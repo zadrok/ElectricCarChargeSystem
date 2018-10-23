@@ -1,3 +1,11 @@
+/*************************
+ * SAGreedy.java
+ * 
+ * Extends the SchedulerAlgorithm class to implement a
+ * greedy scheduling algorithm
+ * 
+ */
+
 package scheduleAlgorithm;
 
 import java.util.List;
@@ -8,7 +16,7 @@ import model.ChargerSystem.Tuple;
 
 public class SAGreedy extends ScheduleAlgorithm
 {
-
+	// Constructor for algorithm
 	public SAGreedy(ChargerSystem aChargeSys)
 	{
 		super(aChargeSys);
@@ -17,11 +25,13 @@ public class SAGreedy extends ScheduleAlgorithm
 	@Override
 	public void run()
 	{
+		// Attempt to charge the top car in the queue
 		List<Tuple<Car, Long, Long>> queue = getChargerSystem().getChargeQueue();
 		for(int i = queue.size()-1; i >= 0; --i)
 		{
 			if(getChargerSystem().getTimeSeconds() >= queue.get(i).timeStart())
 			{
+				// If we successfully start charging the car, we can remove it from the queue
 				if(getChargerSystem().tryChargeCar(queue.get(i).car(), queue.get(i).timeEnd()))
 					queue.remove(i);
 			}

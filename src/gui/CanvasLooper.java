@@ -1,3 +1,10 @@
+/*************************
+ * CanvasLooper.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import boot.GlobalVariables;

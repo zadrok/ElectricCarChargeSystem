@@ -1,3 +1,10 @@
+/*************************
+ * SideBarTabMasterScheduler.java
+ * 
+ * 
+ * 
+ */
+
 package gui;
 
 import javax.swing.*;

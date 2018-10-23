@@ -1,3 +1,11 @@
+/*************************
+ * Main.java
+ * 
+ * Main entry point for program. Will setup agents, system
+ * and GUI and allow the program to run.
+ * 
+ */
+
 package boot;
 
 import gui.*;
