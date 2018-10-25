@@ -21,7 +21,12 @@ public class CanvasLooper implements Runnable
 		canvas = aCanvas;
 		lastTime = System.nanoTime();
 		time = System.nanoTime();
-		deltaTime = (time - lastTime) / 1000000;
+		deltaTime = makeDeltaTime();
+	}
+	
+	public long makeDeltaTime()
+	{
+		return (time - lastTime) / 1000000;
 	}
 	
 	public void run()
@@ -29,7 +34,7 @@ public class CanvasLooper implements Runnable
 		while( true )
 		{
 			time = System.nanoTime();
-			deltaTime = (time - lastTime) / 1000000;
+			deltaTime = makeDeltaTime();
 			lastTime = time;
 			
 			if ( GlobalVariables.drawLoop )

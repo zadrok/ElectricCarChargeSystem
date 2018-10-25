@@ -11,6 +11,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 import javax.swing.*;
 
@@ -77,6 +80,18 @@ public class GUI
 		    }
 		});
 		
+	}
+	
+	public void updateMenuBarClock()
+	{
+		// long time = getChargerSystem().getClockStartTime() + getChargerSystem().getClockRunTime();
+		
+		ZonedDateTime zdt = ZonedDateTime.now();
+		Date date = Date.from( zdt.toInstant() );
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String time = sdf.format( date );
+		
+		menuBar.clock.setText( "Time: " + time );
 	}
 	
 	public void showDialogCreateCar()

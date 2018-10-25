@@ -22,6 +22,10 @@ public class MenuBar extends JMenuBar
 	public JMenuItem exit;
 
 	public JMenu edit;
+	
+	public JMenu blank;
+	
+	public JMenu clock;
 
 	
 	public MenuBar(GUI aGUI)
@@ -32,11 +36,19 @@ public class MenuBar extends JMenuBar
 		file = new JMenu("File");
 		exit = new JMenuItem("Exit");
 
-		edit = new JMenu("Edit");
+//		edit = new JMenu("Edit");
+		
+		blank = new JMenu( "           " );
+		blank.setEnabled(false);
+		
+		clock = new JMenu( "CLOCK" );
+		clock.setEnabled(false);
 
 		add(file);
 		file.add(exit);
-		add(edit);
+//		add(edit);
+		add(blank);
+		add(clock);
 		
 		exit.addActionListener(actionListener);
 	}

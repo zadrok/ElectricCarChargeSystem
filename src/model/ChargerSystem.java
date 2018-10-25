@@ -65,10 +65,16 @@ public class ChargerSystem
 	private Random random;
 	private List<Tuple<Car, Long, Long>> chargeQueue;
 	
+	private long clockStartTime;
+	private long clockRunTime;
+	
 	// Constructor for charger system
 	public ChargerSystem()
 	{
 		random = new Random();
+		clockStartTime = System.currentTimeMillis();
+		clockRunTime = 0;
+		
 		// Create charge points, queue and thread
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
 		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
@@ -345,6 +351,21 @@ public class ChargerSystem
 	public long getTimeSeconds()
 	{
 		return System.currentTimeMillis()/1000;
+	}
+	
+	public long getClockStartTime()
+	{
+		return clockStartTime;
+	}
+	
+	public long getClockRunTime()
+	{
+		return clockRunTime;
+	}
+	
+	public void updateClockRunTime(long aTimeToAdd)
+	{
+		clockRunTime += aTimeToAdd;
 	}
 	
 }
