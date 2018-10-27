@@ -17,6 +17,7 @@ import java.util.Date;
 
 import javax.swing.*;
 
+import boot.GlobalVariables;
 import jade.wrapper.gateway.JadeGateway;
 import model.*;
 
@@ -86,12 +87,12 @@ public class GUI
 	{
 		// long time = getChargerSystem().getClockStartTime() + getChargerSystem().getClockRunTime();
 		
-		ZonedDateTime zdt = ZonedDateTime.now();
-		Date date = Date.from( zdt.toInstant() );
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String time = sdf.format( date );
+//		ZonedDateTime zdt = ZonedDateTime.now();
+//		Date date = Date.from( zdt.toInstant() );
+//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//        String time = sdf.format( date );
 		
-		menuBar.clock.setText( "Time: " + time );
+		menuBar.clock.setText( "Time: " + GlobalVariables.runTime );
 	}
 	
 	public void showDialogCreateCar()

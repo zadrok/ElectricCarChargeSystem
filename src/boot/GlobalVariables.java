@@ -32,6 +32,8 @@ public class GlobalVariables
 	
 	public static double timeScale;
 	
+	public static long runTime;
+	
 	
 	// add variables here to get information from settings file
 	private static void applySettings(JsonObject obj)
@@ -50,6 +52,7 @@ public class GlobalVariables
 		chargePointChargeRateSizeLarge = obj.get("chargePointChargeRateSizeLarge").getAsInt();
 		
 		timeScale = 60.0;
+		runTime = 0;
 	}
 	
 	

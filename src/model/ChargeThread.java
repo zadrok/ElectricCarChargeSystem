@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import boot.GlobalVariables;
+
 //ChargeThread to handle charging of a car
 public class ChargeThread implements Runnable
 {
@@ -67,6 +69,9 @@ public class ChargeThread implements Runnable
 		// Loop while not stopped
 		while(!stop.get())
 		{
+			// increment run time
+			GlobalVariables.runTime++;
+			
 			// Increment car charge
 			synchronized(chargePoints)
 			{
