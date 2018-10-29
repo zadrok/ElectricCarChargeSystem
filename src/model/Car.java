@@ -36,6 +36,9 @@ public class Car extends Agent
 
 	// used in gui
 	private double startAngle;
+	
+	// data of when car is used
+	private CarProfile profile;
 
 	// Default constructor for a car.
 	public Car()
@@ -51,6 +54,7 @@ public class Car extends Agent
 		carState = STATE.IDLE;
 		startAngle = 0;
 		flags = 1;
+		profile = new CarProfile(this);
 	}
 
 	// Secondary constructor

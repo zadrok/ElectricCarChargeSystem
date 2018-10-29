@@ -108,10 +108,28 @@ public class ChargerSystem
 		
 		createMasterScheduler();
 		
-		// Creating 20 car agents
-		for ( int i = 0; i < 20; i++ )
+		// Create Small car agents
+		for ( int i = 0; i < GlobalVariables.numCarsSmall; i++ )
 		{
 			int max = GlobalVariables.carBatterySizeSmall;
+			int base = 0;
+			int current = random.nextInt( max - base ) + base;
+			createCarAgent( max, current );
+		}
+		
+		// Create Medium car agents
+		for ( int i = 0; i < GlobalVariables.numCarsMedium; i++ )
+		{
+			int max = GlobalVariables.carBatterySizeMedium;
+			int base = 0;
+			int current = random.nextInt( max - base ) + base;
+			createCarAgent( max, current );
+		}
+		
+		// Create Large car agents
+		for ( int i = 0; i < GlobalVariables.numCarsLarge; i++ )
+		{
+			int max = GlobalVariables.carBatterySizeLarge;
 			int base = 0;
 			int current = random.nextInt( max - base ) + base;
 			createCarAgent( max, current );
@@ -126,13 +144,23 @@ public class ChargerSystem
 	{
 		// Creating charger points
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge, 2 );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeMedium );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge );
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
-		for(int i = 0; i < 2; ++i)
+		
+		// Create Small charge points
+		for(int i = 0; i < GlobalVariables.numChargePointsSmall; ++i)
+		{
+			createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
+		}
+		
+		// Create Medium charge points
+		for(int i = 0; i < GlobalVariables.numChargePointsMedium; ++i)
 		{
 			createChargePoint( GlobalVariables.chargePointChargeRateSizeMedium );
+		}
+		
+		// Create Large charge points
+		for(int i = 0; i < GlobalVariables.numChargePointsSmall; ++i)
+		{
+			createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge );
 		}
 	}
 	
