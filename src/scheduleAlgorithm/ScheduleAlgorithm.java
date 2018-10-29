@@ -16,13 +16,18 @@ public class ScheduleAlgorithm
 	protected String name;
 	
 	// Constructor for algorithm
-	public ScheduleAlgorithm(ChargerSystem aChargeSys)
+	public ScheduleAlgorithm(ChargerSystem aChargeSys, String aName)
 	{
 		chargeSys = aChargeSys;
-		name = "Default";
+		name = aName;
 	}
 	
 	public String toString()
+	{
+		return getName();
+	}
+	
+	public String getName()
 	{
 		return name;
 	}

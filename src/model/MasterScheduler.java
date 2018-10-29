@@ -9,6 +9,7 @@ package model;
 
 import java.util.ArrayList;
 
+import boot.GlobalVariables;
 import jade.core.Agent;
 import scheduleAlgorithm.*;
 
@@ -27,11 +28,26 @@ public class MasterScheduler extends Agent
 		chargerSystem = aSys;
 		
 		algos = new ArrayList<>();
-		algos.add( new SAGreedy( aSys ) );
-		algos.add( new SAGreedy2( aSys ) );
+		algos.add( new SAGreedy( aSys, "greedy" ) );
+		algos.add( new SAGreedy2( aSys, "greedy2" ) );
 		
 		// Pick scheduling algorithm
-		schAlgo = algos.get(0);
+		// pick based on what was in the config file
+		if ( GlobalVariables.masterSchedulerAlgorithm != null )
+		{
+			for ( ScheduleAlgorithm sa : algos )
+			{
+				if ( sa.getName().contentEquals( GlobalVariables.masterSchedulerAlgorithm ) )
+				{
+					schAlgo = sa;
+					break;
+				}
+			}
+		}
+		
+		// if no match (null) set to first algorithm in list
+		if ( schAlgo == null )
+			schAlgo = algos.get(0);
 	}
 	
 	// Setup behaviour of scheduler

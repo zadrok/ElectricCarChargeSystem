@@ -17,10 +17,9 @@ import model.ChargerSystem.Tuple;
 public class SAGreedy2 extends ScheduleAlgorithm
 {
 	// Constructor for algorithm
-	public SAGreedy2(ChargerSystem aChargeSys)
+	public SAGreedy2(ChargerSystem aChargeSys, String aName)
 	{
-		super(aChargeSys);
-		name = "Greedy2";
+		super(aChargeSys, aName);
 	}
 	
 	@Override
