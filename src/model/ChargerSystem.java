@@ -89,6 +89,23 @@ public class ChargerSystem
 		initChargerPoints();
 	}
 	
+	// stop all loopers and threads
+	public void stopLoopers()
+	{
+		chargeThread.stop();
+	}
+	
+	// kill all agents
+	public void killAll()
+	{
+		masterSchedulerAgent.doDelete();
+		
+		for ( Car car : carAgents )
+		{
+			car.doDelete();
+		}
+	}
+	
 	// Agent initializer to create containers
 	public void initJadeAgents()
 	{

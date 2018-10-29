@@ -50,6 +50,8 @@ public class Simulator extends Scene
 		// if something needs to be done before changing scenes
 		getGUI().removeJMenuBar();
 		canvas.stopLooper();
+		chargeSys.stopLoopers();
+		chargeSys.killAll();
 	}
 	
 	public void showDialogCreateCar()

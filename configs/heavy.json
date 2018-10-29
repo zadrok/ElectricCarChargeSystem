@@ -1,0 +1,42 @@
+{
+	"cars": [
+		{
+			"type": "small",
+			"number": 40
+		},
+		{
+			"type": "medium",
+			"number": 20
+		},
+		{
+			"type": "large",
+			"number": 20
+		}
+	],
+	"chargePoints": [
+		{
+			"type": "small",
+			"number": 20
+		},
+		{
+			"type": "medium",
+			"number": 10
+		},
+		{
+			"type": "large",
+			"number": 10
+		}
+	],
+	"outlets": 50,
+	"masterSchedulerAlgorithm": "greedy",
+	"chargeInterval": 10,
+	"drawLoop": true,
+	"drawFrameRate": 20,
+	"carBatterySizeSmall": 20,
+	"carBatterySizeMedium": 50,
+	"carBatterySizeLarge": 90,
+	"chargePointChargeRateSizeSmall": 7,
+	"chargePointChargeRateSizeMedium": 75,
+	"chargePointChargeRateSizeLarge": 135,
+	"timeScale": 60
+}

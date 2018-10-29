@@ -18,13 +18,29 @@ import model.ChargerSystem.Tuple;
 @SuppressWarnings("serial")
 public class CanvasTabTimeLine extends CanvasTab
 {
-	private double topVal;
+	// offset from zero, for scrolling
+	private double offsetVal;
+	// distance from left wall
+	private int xMargin;
+	// distance from top
+	private int yMargin;
+	// horizontal gap size
+	private int widthIncrement;
+	// vertical gap size
+	private int heightIncrement;
+	// block of time size
+	private int block;
 	
 	public CanvasTabTimeLine(Canvas aCanvas)
 	{
 		super(aCanvas);
 		
-		topVal = 0;
+		offsetVal = 0;
+		xMargin = 5;
+		yMargin = 5;
+		widthIncrement = 30;
+		heightIncrement = 30;
+		block = 30;
 		
 		addMouseListener( mouseListener() );
 		addMouseMotionListener( mouseMotionListener() );
@@ -40,11 +56,11 @@ public class CanvasTabTimeLine extends CanvasTab
 			{
 				if ( e.getWheelRotation() >= 1 )
 				{
-					topVal--;
+					offsetVal--;
 				}
 				else if ( e.getWheelRotation() <= -1 )
 				{
-					topVal++;
+					offsetVal++;
 				}
 			}
 		};
@@ -80,7 +96,7 @@ public class CanvasTabTimeLine extends CanvasTab
 			
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				topVal++;
+				offsetVal++;
 			}
 		};
 	}
@@ -88,26 +104,26 @@ public class CanvasTabTimeLine extends CanvasTab
 	public void paintComponent(Graphics g)
     {
 		Graphics2D g2 = (Graphics2D) g;
+		// time since last run, use to smooth animations
 		double deltaTime = getLooper().getDeltaTime();
+		// current simulation run time
+		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
 		// clear screen white
 		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), ColorIndex.canvasFill );
 		
-		drawGraphBack(g2,deltaTime);
-		drawBlocks(g2,deltaTime);
-		drawGraphFront(g2,deltaTime);
+		drawGraphBack(g2,deltaTime,ct);
+		drawBlocks(g2,deltaTime,ct);
+		drawGraphFront(g2,deltaTime,ct);
     }
 	
-	private void drawGraphBack(Graphics2D g2, double aDeltaTime)
+	private void drawGraphBack(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
 	{
 		
 	}
 	
-	private void drawGraphFront(Graphics2D g2, double aDeltaTime)
+	private void drawGraphFront(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
 	{
-		int xMargin = 5;
-		int yMargin = 5;
-		int widthIncrement = 30;
-		int heightIncrement = 30;
+		
 		
 		// draw horizontal lines
 		int count = 0;
@@ -121,11 +137,7 @@ public class CanvasTabTimeLine extends CanvasTab
 		
 		// draw time on horizontal lines
 		// make this number the center value
-		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
-		// block time
-		int block = 30;
-		
-		int centerLineNum = count/2;
+		int centerLineNum = count/4;
 		
 //		------------------
 //		-02:00------------
@@ -141,7 +153,7 @@ public class CanvasTabTimeLine extends CanvasTab
 		for ( int i = 0; i < count; i++ )
 		{
 			int numBlocks = count - ( centerLineNum - i );
-			long[] times = ct.addMinutes(block*(i-centerLineNum));
+			long[] times = aCT.addMinutes(block*(i-centerLineNum));
 			
 			String s = String.format("%02d:%02d", times[0], times[1]);
 			drawString(g2, s, rect.x, rect.y, Color.BLACK);
@@ -157,13 +169,10 @@ public class CanvasTabTimeLine extends CanvasTab
 		}
 	}
 	
-	public ChargerSystem getChargerSystem()
+	private void drawBlocks(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
 	{
-		return getCanvas().getSimulator().getChargerSystem();
-	}
-	
-	private void drawBlocks(Graphics2D g2, double aDeltaTime)
-	{
+		int block = 30;
+		
 		// expired / used queue
 		for ( Tuple<Car, Long, Long> lItem : getChargerSystem().getChargeQueueOLD() )
 		{
@@ -175,6 +184,11 @@ public class CanvasTabTimeLine extends CanvasTab
 		{
 			
 		}
+	}
+	
+	public ChargerSystem getChargerSystem()
+	{
+		return getCanvas().getSimulator().getChargerSystem();
 	}
 }
 

@@ -73,6 +73,11 @@ public class MainMenu extends Scene
 				selectedFile = fileList.getSelectedValue();
 				if ( selectedFile != null )
 					bttn.setText( "Start with " + selectedFile.getName() );
+				
+				if ( e.getClickCount() >= 2 )
+				{
+					getGUI().runSimulator( selectedFile );
+				}
 			}
 
 			@Override
