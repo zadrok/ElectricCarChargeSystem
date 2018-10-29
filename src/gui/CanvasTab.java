@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import javax.swing.*;
@@ -46,6 +47,18 @@ public class CanvasTab extends JPanel
 	{
 		g2.setColor( aColor );
 		g2.drawLine( aRect.x, aRect.y, aRect.x+aRect.width, aRect.y+aRect.height );
+	}
+	
+	public void drawPoint(Graphics2D g2, Point aPoint, int aRadius, Color aColor)
+	{
+		g2.setColor(aColor);
+		g2.fillOval(aPoint.x-aRadius, aPoint.y-aRadius, aRadius*2, aRadius*2);
+	}
+	
+	public void drawPolyLine(Graphics2D g2, int[] aXPoints, int[] aYPoints, Color aColor)
+	{
+		g2.setColor(aColor);
+		g2.drawPolyline(aXPoints, aYPoints, aXPoints.length);
 	}
 	
 	public CanvasLooper getLooper()

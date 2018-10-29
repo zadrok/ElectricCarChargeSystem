@@ -19,6 +19,7 @@ public class Canvas extends JPanel
 	
 	private CanvasTabNodes tabNodes;
 	private CanvasTabTimeLine tabTimeLine;
+	private CanvasTabCarProfile tabCarProfile;
 	
 	public Canvas(Simulator aSimulator, int x, int y, int width, int height)
 	{
@@ -33,9 +34,11 @@ public class Canvas extends JPanel
 		
 		tabNodes = new CanvasTabNodes(this);
 		tabTimeLine = new CanvasTabTimeLine(this);
+		tabCarProfile = new CanvasTabCarProfile(this);
 		
 		tabPane.add("Nodes", tabNodes);
 		tabPane.add("Time Line", tabTimeLine);
+		tabPane.add("Car Profile", tabCarProfile);
 		
 		add( tabPane );
 	}
@@ -52,6 +55,9 @@ public class Canvas extends JPanel
 		
 		if ( tabTimeLine != null )
 			tabTimeLine.updateSize(x, y, width, height);
+		
+		if ( tabCarProfile != null )
+			tabCarProfile.updateSize(x, y, width, height);
 	}
 	
 	public void refresh()

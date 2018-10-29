@@ -28,17 +28,21 @@ public class CarProfile
 		hours = 24;
 		timesPerHour = 8;
 		range = 100;
-		lowerBracket = 60;
-		upperBracket = 80;
-		smoothAmount = 10;
+		lowerBracket = 50;
+		upperBracket = 75;
+		smoothAmount = 1;
 		
 		// generate int list
 		for ( int i = 0; i <= hours*timesPerHour; i++ )
 			usage.add( random.nextInt(range) );
 		
+//		System.out.println( "a " + usage.toString() );
+		
 		// smooth int list
 		for ( int i = 0; i < smoothAmount; i++ )
 			usage = smooth(usage);
+		
+//		System.out.println( "b " + usage.toString() );
 		
 		// clamp ints
 		for ( int i = 0; i < usage.size(); i++ )
@@ -50,6 +54,7 @@ public class CarProfile
 				usage.set(i, 0);
 		}
 		
+//		System.out.println( "c " + usage.toString() );
 	}
 	
 	private ArrayList<Integer> smooth(ArrayList<Integer> aList)
@@ -89,6 +94,8 @@ public class CarProfile
 			// average of ints
 			int n = ( x1 + x2 + x3 ) / 3;
 			
+//			System.out.println( "x1 " + x1 + " x2 " + x2 + " x3 " + x3 + " n " + n );
+			
 			newList.add( n );
 			
 		}
@@ -99,5 +106,10 @@ public class CarProfile
 	public Car getCar()
 	{
 		return car;
+	}
+	
+	public ArrayList<Integer> getUsage()
+	{
+		return usage;
 	}
 }

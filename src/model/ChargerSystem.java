@@ -153,7 +153,7 @@ public class ChargerSystem
 		}
 
 		// Creating car with extra flags
-		createCarAgent( getCarAgents().size(), GlobalVariables.carBatterySizeLarge, 10, (2 | 4) );
+//		createCarAgent( getCarAgents().size(), GlobalVariables.carBatterySizeLarge, 10, (2 | 4) );
 	}
 	
 	// Creates charger points based on defaults

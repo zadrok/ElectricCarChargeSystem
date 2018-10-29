@@ -84,6 +84,12 @@ public class Car extends Agent
 		return wantCharge;
 	}
 	
+	// return the cars usage profile
+	public CarProfile getProfile()
+	{
+		return profile;
+	}
+	
 	// Set if the car wants to charge
 	public void setWantCharge(boolean aBool)
 	{
