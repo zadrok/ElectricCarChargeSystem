@@ -64,6 +64,7 @@ public class ChargerSystem
 	
 	private Random random;
 	private List<Tuple<Car, Long, Long>> chargeQueue;
+	private List<Tuple<Car, Long, Long>> chargeQueueOLD;
 	
 	private long clockStartTime;
 	private long clockRunTime;
@@ -78,9 +79,14 @@ public class ChargerSystem
 		// Create charge points, queue and thread
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
 		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
+		chargeQueueOLD = new ArrayList<Tuple<Car, Long, Long>>();
 		chargeThread = new ChargeThread(chargePoints, GlobalVariables.chargeInterval);
 		chargeThreadThread = new Thread(chargeThread);
 		chargeThreadThread.start();
+		
+
+		initJadeAgents();
+		initChargerPoints();
 	}
 	
 	// Agent initializer to create containers
@@ -102,8 +108,8 @@ public class ChargerSystem
 		
 		createMasterScheduler();
 		
-		// Creating 200 car agents
-		for ( int i = 0; i < 200; i++ )
+		// Creating 20 car agents
+		for ( int i = 0; i < 20; i++ )
 		{
 			int max = GlobalVariables.carBatterySizeSmall;
 			int base = 0;
@@ -124,7 +130,7 @@ public class ChargerSystem
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge );
 		createChargePoint( GlobalVariables.chargePointChargeRateSizeSmall );
-		for(int i = 0; i < 45; ++i)
+		for(int i = 0; i < 2; ++i)
 		{
 			createChargePoint( GlobalVariables.chargePointChargeRateSizeMedium );
 		}
@@ -345,6 +351,12 @@ public class ChargerSystem
 	public List<Tuple<Car, Long, Long>> getChargeQueue()
 	{
 		return chargeQueue;
+	}
+	
+	// Get OLD charge queue
+	public List<Tuple<Car, Long, Long>> getChargeQueueOLD()
+	{
+		return chargeQueueOLD;
 	}
 	
 	// Get system time in seconds

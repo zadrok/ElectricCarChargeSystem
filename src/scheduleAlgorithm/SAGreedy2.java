@@ -14,13 +14,13 @@ import model.Car;
 import model.ChargerSystem;
 import model.ChargerSystem.Tuple;
 
-public class SAGreedy extends ScheduleAlgorithm
+public class SAGreedy2 extends ScheduleAlgorithm
 {
 	// Constructor for algorithm
-	public SAGreedy(ChargerSystem aChargeSys)
+	public SAGreedy2(ChargerSystem aChargeSys)
 	{
 		super(aChargeSys);
-		name = "Greedy";
+		name = "Greedy2";
 	}
 	
 	@Override

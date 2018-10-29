@@ -70,7 +70,9 @@ public class ChargeThread implements Runnable
 		while(!stop.get())
 		{
 			// increment run time
-			GlobalVariables.runTime++;
+//			GlobalVariables.runTime++;
+			GlobalVariables.runTime += 1;
+			
 			
 			// Increment car charge
 			synchronized(chargePoints)

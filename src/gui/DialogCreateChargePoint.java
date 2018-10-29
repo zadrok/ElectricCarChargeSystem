@@ -19,9 +19,9 @@ public class DialogCreateChargePoint extends Dialog
 	public JLabel chargeRateTitle;
 	public JTextField chargeRateInfo;
 	
-	public DialogCreateChargePoint(GUI aGUI)
+	public DialogCreateChargePoint(Simulator aSimulator)
 	{
-		super(aGUI, "Create Charge Point", false);
+		super(aSimulator, "Create Charge Point", false);
 		setSize(360,200);
 		
 		yOffset += yOffsetIncrement;

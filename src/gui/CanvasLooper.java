@@ -7,6 +7,8 @@
 
 package gui;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import boot.GlobalVariables;
 
 public class CanvasLooper implements Runnable
@@ -15,6 +17,7 @@ public class CanvasLooper implements Runnable
 	private long lastTime;
 	private long time;
 	private double deltaTime;
+	private AtomicBoolean stop;
 	
 	public CanvasLooper(Canvas aCanvas)
 	{
@@ -22,6 +25,7 @@ public class CanvasLooper implements Runnable
 		lastTime = System.nanoTime();
 		time = System.nanoTime();
 		deltaTime = makeDeltaTime();
+		stop = new AtomicBoolean(false);
 	}
 	
 	public long makeDeltaTime()
@@ -31,7 +35,7 @@ public class CanvasLooper implements Runnable
 	
 	public void run()
 	{
-		while( true )
+		while( !stop.get() )
 		{
 			time = System.nanoTime();
 			deltaTime = makeDeltaTime();
@@ -40,7 +44,7 @@ public class CanvasLooper implements Runnable
 			if ( GlobalVariables.drawLoop )
 			{
 				canvas.refresh();
-				canvas.getGUI().refreshSideBar();
+				canvas.getSimulator().refreshSideBar();
 			}
 			
 			// Sleep for given period of time
@@ -54,6 +58,16 @@ public class CanvasLooper implements Runnable
 			}
 			
 		}
+	}
+	
+	public void stop()
+	{
+		stop.set(true);
+	}
+	
+	public void start()
+	{
+		stop.set(false);
 	}
 	
 	public long getLastTime()

@@ -7,9 +7,10 @@
 
 package model;
 
+import java.util.ArrayList;
+
 import jade.core.Agent;
-import scheduleAlgorithm.SAGreedy;
-import scheduleAlgorithm.ScheduleAlgorithm;
+import scheduleAlgorithm.*;
 
 @SuppressWarnings("serial")
 public class MasterScheduler extends Agent
@@ -17,6 +18,7 @@ public class MasterScheduler extends Agent
 	private MasterSchedulerBehaviourBasic MSBehaviour;
 	private ChargerSystem chargerSystem;
 	private ScheduleAlgorithm schAlgo;
+	private ArrayList<ScheduleAlgorithm> algos;
 	
 	// Constructor for master scheduler
 	public MasterScheduler(ChargerSystem aSys)
@@ -24,8 +26,12 @@ public class MasterScheduler extends Agent
 		super();
 		chargerSystem = aSys;
 		
+		algos = new ArrayList<>();
+		algos.add( new SAGreedy( aSys ) );
+		algos.add( new SAGreedy2( aSys ) );
+		
 		// Pick scheduling algorithm
-		schAlgo = new SAGreedy( aSys );
+		schAlgo = algos.get(0);
 	}
 	
 	// Setup behaviour of scheduler
@@ -51,5 +57,17 @@ public class MasterScheduler extends Agent
 	public ScheduleAlgorithm getScheduleAlgorithm()
 	{
 		return schAlgo;
+	}
+	
+	// Set scheduling algorithm
+	public void setScheduleAlgorithm(ScheduleAlgorithm aSchAlgo)
+	{
+		schAlgo = aSchAlgo;
+	}
+	
+	// Get all scheduling algorithms
+	public ArrayList<ScheduleAlgorithm> getAllScheduleAlgorithms()
+	{
+		return algos;
 	}
 }

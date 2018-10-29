@@ -9,6 +9,8 @@ package gui;
 
 import javax.swing.JPanel;
 
+import model.ChargerSystem;
+
 @SuppressWarnings("serial")
 public class SideBarTab extends JPanel
 {
@@ -59,5 +61,15 @@ public class SideBarTab extends JPanel
 	public GUI getGUI()
 	{
 		return getSideBar().getGUI();
+	}
+	
+	public Simulator getSimulator()
+	{
+		return  getSideBar().getSimulator();
+	}
+
+	public ChargerSystem getChargerSystem()
+	{
+		return getSideBar().getChargerSystem();
 	}
 }

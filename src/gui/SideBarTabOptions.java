@@ -126,19 +126,19 @@ public class SideBarTabOptions extends SideBarTab
 			{
 				if ( e.getSource() == createNewCarSmall )
 				{
-					getGUI().getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeSmall, 50);
+					getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeSmall, 50);
 				}
 				else if ( e.getSource() == createNewCarMedium )
 				{
-					getGUI().getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeMedium, 50);
+					getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeMedium, 50);
 				}
 				else if ( e.getSource() == createNewCarLarge )
 				{
-					getGUI().getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeLarge, 50);
+					getChargerSystem().createCarAgent(GlobalVariables.carBatterySizeLarge, 50);
 				}
 				else if ( e.getSource() == createNewCarCustom )
 				{
-					getGUI().showDialogCreateCar();
+					getSimulator().showDialogCreateCar();
 				}
 			}
 		};
@@ -150,19 +150,19 @@ public class SideBarTabOptions extends SideBarTab
 			{
 				if ( e.getSource() == createNewChargePointSmall )
 				{
-					getGUI().getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeSmall);
+					getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeSmall);
 				}
 				else if ( e.getSource() == createNewChargePointMedium )
 				{
-					getGUI().getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeMedium);
+					getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeMedium);
 				}
 				else if ( e.getSource() == createNewChargePointLarge )
 				{
-					getGUI().getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeLarge);
+					getChargerSystem().createChargePoint(GlobalVariables.chargePointChargeRateSizeLarge);
 				}
 				else if ( e.getSource() == createNewChargePointCustom )
 				{
-					getGUI().showDialogCreateChargePoint();
+					getSimulator().showDialogCreateChargePoint();
 				}
 			}
 		};

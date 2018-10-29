@@ -12,12 +12,19 @@ import model.ChargerSystem;
 
 public class ScheduleAlgorithm
 {
-	protected  ChargerSystem chargeSys;
+	protected ChargerSystem chargeSys;
+	protected String name;
 	
 	// Constructor for algorithm
 	public ScheduleAlgorithm(ChargerSystem aChargeSys)
 	{
 		chargeSys = aChargeSys;
+		name = "Default";
+	}
+	
+	public String toString()
+	{
+		return name;
 	}
 	
 	// Run function

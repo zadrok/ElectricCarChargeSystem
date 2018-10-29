@@ -12,6 +12,7 @@ import java.awt.event.MouseWheelListener;
 
 import boot.GlobalVariables;
 import model.Car;
+import model.ChargerSystem;
 import model.ChargerSystem.Tuple;
 
 @SuppressWarnings("serial")
@@ -120,16 +121,29 @@ public class CanvasTabTimeLine extends CanvasTab
 		
 		// draw time on horizontal lines
 		// make this number the center value
-		long t = GlobalVariables.runTime;
-		// 30 minute blocks
-		// num blocks = count
-		long blockSize = 30;
+		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
+		// block time
+		int block = 30;
+		
+		int centerLineNum = count/2;
+		
+//		------------------
+//		-02:00------------
+//		------------------
+//		00:00------------- center point is focus
+//		------------------
+//		+02:00------------
+//		------------------
 		
 		
+		// draw horizontal lines test (time)
 		rect = new Rectangle(xMargin, yMargin, getWidth() - xMargin - widthIncrement, 0);
 		for ( int i = 0; i < count; i++ )
 		{
-			String s = "" + ( (topVal*blockSize) + (t/blockSize) - ( Math.round(count/2)-i ) );
+			int numBlocks = count - ( centerLineNum - i );
+			long[] times = ct.addMinutes(block*(i-centerLineNum));
+			
+			String s = String.format("%02d:%02d", times[0], times[1]);
 			drawString(g2, s, rect.x, rect.y, Color.BLACK);
 			rect.y += heightIncrement;
 		}
@@ -143,15 +157,24 @@ public class CanvasTabTimeLine extends CanvasTab
 		}
 	}
 	
+	public ChargerSystem getChargerSystem()
+	{
+		return getCanvas().getSimulator().getChargerSystem();
+	}
+	
 	private void drawBlocks(Graphics2D g2, double aDeltaTime)
 	{
-		for ( Tuple<Car, Long, Long> lItem : getGUI().getChargerSystem().getChargeQueue() )
+		// expired / used queue
+		for ( Tuple<Car, Long, Long> lItem : getChargerSystem().getChargeQueueOLD() )
 		{
 			
 		}
 		
-		String s = "" + getGUI().getChargerSystem().getChargeQueue().size();
-		drawString(g2, s, 10, 10, Color.BLACK);
+		// current / future queue
+		for ( Tuple<Car, Long, Long> lItem : getChargerSystem().getChargeQueue() )
+		{
+			
+		}
 	}
 }
 

@@ -12,19 +12,20 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class Canvas extends JPanel
 {
-	private GUI gui;
+	private Simulator simulator;
 	private CanvasLooper looper;
+	private Thread looperThread;
 	private JTabbedPane tabPane;
 	
 	private CanvasTabNodes tabNodes;
 	private CanvasTabTimeLine tabTimeLine;
 	
-	public Canvas(GUI aGUI, int x, int y, int width, int height)
+	public Canvas(Simulator aSimulator, int x, int y, int width, int height)
 	{
 		super();
 		updateSize( x,y,width,height );
 		setLayout(null);
-		gui = aGUI;
+		simulator = aSimulator;
 		looper = new CanvasLooper(this);
 		
 		tabPane = new JTabbedPane();
@@ -69,12 +70,24 @@ public class Canvas extends JPanel
 	
 	public void startLooper()
 	{
-		looper.run();
+		looper.start();
+		looperThread = new Thread(looper);
+		looperThread.start();
+	}
+	
+	public void stopLooper()
+	{
+		looper.stop();
 	}
 	
 	public GUI getGUI()
 	{
-		return gui;
+		return getSimulator().getGUI();
+	}
+	
+	public Simulator getSimulator()
+	{
+		return simulator;
 	}
 	
 }

@@ -10,10 +10,12 @@ package gui;
 import java.awt.*;
 import javax.swing.*;
 
+import model.ChargerSystem;
+
 @SuppressWarnings("serial")
 public class SideBar extends JPanel
 {
-	private GUI gui;
+	private Simulator simulator;
 	private JTabbedPane tabPane;
 	
 	private SideBarTabOptions tabOptions;	
@@ -22,12 +24,12 @@ public class SideBar extends JPanel
 	private SideBarTabChargePoint tabChargePoint;
 	private SideBarTabKey tabKey;
 	
-	public SideBar(GUI aGUI, int x, int y, int width, int height)
+	public SideBar(Simulator aSimulator, int x, int y, int width, int height)
 	{
 		super();
 		updateSize( x,y,width,height );
 		setLayout(null);
-		gui = aGUI;
+		simulator = aSimulator;
 		
 		tabPane = new JTabbedPane();
 		tabPane.setBounds(0, 0, getWidth(), getHeight());
@@ -71,7 +73,17 @@ public class SideBar extends JPanel
 	
 	public GUI getGUI()
 	{
-		return gui;
+		return simulator.getGUI();
+	}
+
+	public Simulator getSimulator()
+	{
+		return simulator;
+	}
+
+	public ChargerSystem getChargerSystem()
+	{
+		return getSimulator().getChargerSystem();
 	}
 	
 }

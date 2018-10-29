@@ -8,11 +8,9 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import model.ChargerSystem.Tuple;
 
 @SuppressWarnings("serial")
 public class MasterSchedulerBehaviourBasic extends CyclicBehaviour

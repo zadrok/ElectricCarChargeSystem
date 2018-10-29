@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 
 import model.Car;
 import model.ChargePoint;
+import model.ChargerSystem;
 
 @SuppressWarnings("serial")
 public class CanvasTabNodes extends CanvasTab
@@ -39,6 +40,11 @@ public class CanvasTabNodes extends CanvasTab
 		rotatingCircleScale = 0.8;
 		cellGap = 10;
 		
+
+		int partHeight = (int) (getHeight()/screenSplit);
+		chargePointRect = new Rectangle( 0, 0, getWidth(), partHeight );
+		carRect = new Rectangle( 0, partHeight, getWidth(), getHeight()-partHeight );
+		
 		addMouseListener( mouseListener() );
 	}
 	
@@ -47,7 +53,12 @@ public class CanvasTabNodes extends CanvasTab
 		setBounds( x,y,width,height );
 		int partHeight = (int) (getHeight()/screenSplit);
 		chargePointRect = new Rectangle( 0, 0, getWidth(), partHeight );
-		carRect = new Rectangle( 0, partHeight, getWidth(), height-partHeight );
+		carRect = new Rectangle( 0, partHeight, getWidth(), getHeight()-partHeight );
+	}
+	
+	public ChargerSystem getChargerSystem()
+	{
+		return getCanvas().getSimulator().getChargerSystem();
 	}
 	
 	public void paintComponent(Graphics g)
@@ -68,13 +79,13 @@ public class CanvasTabNodes extends CanvasTab
 		
 		Rectangle drawAreaRect = makeDrawArea(chargePointRect);
 		
-		int numPoints = getGUI().getChargerSystem().getChargePoints().size();
+		int numPoints = getChargerSystem().getChargePoints().size();
 		int[] info = makeRectInfo( drawAreaRect, numPoints );
 		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
 		int i = info[3];
 		int count = 0;
 		
-		for ( ChargePoint lCPoint : getGUI().getChargerSystem().getChargePoints() )
+		for ( ChargePoint lCPoint : getChargerSystem().getChargePoints() )
 		{
 			drawChargePoint( g2, aDeltaTime, lCPoint, rect );
 			
@@ -96,15 +107,15 @@ public class CanvasTabNodes extends CanvasTab
 		
 		Rectangle drawAreaRect = makeDrawArea( carRect );
 
-		int numCars = getGUI().getChargerSystem().getCarAgents().size();
+		int numCars = getChargerSystem().getCarAgents().size();
 		int[] info = makeRectInfo( drawAreaRect, numCars );
 		Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
 		int i = info[3];
 		int count = 0;
 
-		for ( Car lCar : getGUI().getChargerSystem().getCarAgents() )
+		for ( Car lCar : getChargerSystem().getCarAgents() )
 		{
-			if ( getGUI().getChargerSystem().carOnCharge( lCar ) )
+			if ( getChargerSystem().carOnCharge( lCar ) )
 				continue;
 			
 			drawCar( g2, aDeltaTime, lCar, rect );
@@ -137,16 +148,16 @@ public class CanvasTabNodes extends CanvasTab
 			else
 				fillRect( g2, aRect, ColorIndex.chargePointCell );
 			// draw other
-			int xCenter = aRect.x + (aRect.width/2);
-			int yCenter = aRect.y + (aRect.height/2);
-			int barWidth = (int) (aRect.width/1.5);
-			int barHeight = aRect.height/4;
-			Rectangle barRect = new Rectangle();
-			barRect.x = xCenter - ( barWidth/2 );
-			barRect.y = yCenter - ( barHeight/2 );
-			barRect.width = barWidth;
-			barRect.height = barHeight;
-			fillRect( g2, barRect, ColorIndex.chargePointEmptyBar );
+//			int xCenter = aRect.x + (aRect.width/2);
+//			int yCenter = aRect.y + (aRect.height/2);
+//			int barWidth = (int) (aRect.width/1.5);
+//			int barHeight = aRect.height/4;
+//			Rectangle barRect = new Rectangle();
+//			barRect.x = xCenter - ( barWidth/2 );
+//			barRect.y = yCenter - ( barHeight/2 );
+//			barRect.width = barWidth;
+//			barRect.height = barHeight;
+//			fillRect( g2, barRect, ColorIndex.chargePointEmptyBar );
 		}
 		
 		
@@ -161,7 +172,7 @@ public class CanvasTabNodes extends CanvasTab
 			fillRect( g2, aRect, ColorIndex.carCell );
 		
 		// draw other
-		if ( getGUI().getChargerSystem().isCharging() )
+		if ( getChargerSystem().isCharging() )
 		{
 			drawRotatingCircle(g2, aRect, (int) aCar.getStartAngle(), 70,  strokeWidth, strokeScale, ColorIndex.rotatingCircleNormal);
 			
@@ -304,13 +315,13 @@ public class CanvasTabNodes extends CanvasTab
 				{
 					Rectangle drawAreaRect = makeDrawArea(chargePointRect);
 					
-					int numPoints = getGUI().getChargerSystem().getChargePoints().size();
+					int numPoints = getChargerSystem().getChargePoints().size();
 					int[] info = makeRectInfo( drawAreaRect, numPoints );
 					Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
 					int i = info[3];
 					int count = 0;
 					
-					for ( ChargePoint lCPoint : getGUI().getChargerSystem().getChargePoints() )
+					for ( ChargePoint lCPoint : getChargerSystem().getChargePoints() )
 					{
 						if ( rect.contains( e.getPoint() ) )
 						{
@@ -335,15 +346,15 @@ public class CanvasTabNodes extends CanvasTab
 					
 					Rectangle drawAreaRect = makeDrawArea( carRect );
 
-					int numCars = getGUI().getChargerSystem().getCarAgents().size();
+					int numCars = getChargerSystem().getCarAgents().size();
 					int[] info = makeRectInfo( drawAreaRect, numCars );
 					Rectangle rect = new Rectangle( info[0], info[1], info[2], info[2] );
 					int i = info[3];
 					int count = 0;
 
-					for ( Car lCar : getGUI().getChargerSystem().getCarAgents() )
+					for ( Car lCar : getChargerSystem().getCarAgents() )
 					{
-						if ( getGUI().getChargerSystem().carOnCharge( lCar ) )
+						if ( getChargerSystem().carOnCharge( lCar ) )
 							continue;
 						
 						if ( rect.contains( e.getPoint() ) )

@@ -11,9 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.io.File;
 
 import javax.swing.*;
 
@@ -26,46 +24,28 @@ public class GUI
 	private JFrame frame;
 	private String windowTitle;
 	private int windowWidth;
-	private int windowHegiht;
-	private MenuBar menuBar;
-	private ChargerSystem chargeSys;
-	private Canvas canvas;
-	private SideBar sideBar;
+	private int windowHeight;
 	private Car selectedCar;
 	private ChargePoint selectedChargePoint;
-	private DialogCreateCar dialogCreateCar;
-	private DialogCreateChargePoint dialogCreateChargePoint;
+	private Scene scene;
 	
-	public GUI( ChargerSystem aChargeSystem )
+	public GUI()
 	{
-		chargeSys = aChargeSystem;
-		
 		windowTitle = "Electric Car Charge System";
 		windowWidth = 1280;
-		windowHegiht = 720;
+		windowHeight = 720;
 		selectedCar = null;
 		selectedChargePoint = null;
 		
 		frame = new JFrame(windowTitle);
-		frame.setSize(windowWidth,windowHegiht);
+		frame.setSize(windowWidth,windowHeight);
 		frame.setBackground(ColorIndex.window);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-	    frame.addWindowListener( customWindowAdapter() );
+	    scene = new MainMenu( this, 0, 0, getWindowWidth(), getWindowHeight() );
+	    frame.add(scene);
 	    
-		menuBar = new MenuBar(this);
-		frame.add( menuBar );
-		frame.setJMenuBar(menuBar);
-		
-		int sideBarWidth = windowWidth/3;
-		sideBar = new SideBar( this, 0, 0, sideBarWidth, windowHegiht );
-		canvas = new Canvas( this, sideBarWidth, 0, windowWidth-sideBarWidth, windowHegiht );
-		
-		frame.add( sideBar );
-		frame.add( canvas );
-		
-		dialogCreateCar = new DialogCreateCar(this);
-		dialogCreateChargePoint = new DialogCreateChargePoint(this);
+	    frame.addWindowListener( customWindowAdapter() );
 		
 		frame.setLayout(null);
 		frame.setVisible(true);
@@ -74,45 +54,71 @@ public class GUI
 		{
 		    public void componentResized(ComponentEvent componentEvent)
 		    {
-		    	windowHegiht = frame.getHeight();
+		    	windowHeight = frame.getHeight();
 		    	windowWidth = frame.getWidth();
-		    	sideBar.updateSize( 0, 0, sideBarWidth, windowHegiht );
-		        canvas.updateSize( sideBarWidth, 0, windowWidth-sideBarWidth, windowHegiht );
+		    	scene.updateSize(0, 0, windowWidth, windowHeight);
 		    }
 		});
 		
 	}
 	
+	public int getWindowWidth()
+	{
+		return windowWidth;
+	}
+	
+	public int getWindowHeight()
+	{
+		return windowHeight;
+	}
+	
+	public void setJMenuBar(JMenuBar aMenuBar)
+	{
+		frame.setJMenuBar(aMenuBar);
+	}
+	
+	public void removeJMenuBar()
+	{
+		frame.setJMenuBar(null);
+	}
+	
+	public void runSimulator(File aConfigFile)
+	{
+		frame.remove( scene );
+		scene.destroy();
+		
+		GlobalVariables.importSettings( aConfigFile );
+		
+		scene = new Simulator(this, 0, 0, windowWidth, windowHeight);
+		frame.add(scene);
+		
+		refresh();
+		
+		((Simulator)scene).startDrawLoop();
+	}
+	
+	public void runMainMenu()
+	{
+		frame.remove( scene );
+		scene.destroy();
+		
+		scene = new MainMenu(this, 0, 0, windowWidth, windowHeight);
+		frame.add(scene);
+		
+		refresh();
+	}
+	
 	public void updateMenuBarClock()
 	{
-		// long time = getChargerSystem().getClockStartTime() + getChargerSystem().getClockRunTime();
+		if ( scene.getMenuBar() == null )
+			return;
 		
-//		ZonedDateTime zdt = ZonedDateTime.now();
-//		Date date = Date.from( zdt.toInstant() );
-//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-//        String time = sdf.format( date );
+		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
+
+		String time = String.format("DAY: %02d - TIME: %02d:%02d:%02d", ct.day, ct.hour, ct.minute, ct.second);
 		
-		menuBar.clock.setText( "Time: " + GlobalVariables.runTime );
-	}
-	
-	public void showDialogCreateCar()
-	{
-		dialogCreateCar.setVisible(true);
-	}
-	
-	public void showDialogCreateChargePoint()
-	{
-		dialogCreateChargePoint.setVisible(true);
-	}
-	
-	public void startDrawLoop()
-	{
-		canvas.startLooper();
-	}
-	
-	public void refreshSideBar()
-	{
-		sideBar.refresh();
+		scene.getMenuBar().clock.setText( time );
+		scene.getMenuBar().clockreal.setText( "Cycle: " + ct.durationInMillis );
 	}
 	
 	public void refresh()
@@ -143,11 +149,6 @@ public class GUI
 		frame.dispose();
 		JadeGateway.shutdown();
 		System.exit(0);
-	}
-	
-	public ChargerSystem getChargerSystem()
-	{
-		return chargeSys;
 	}
 	
 	public Car getSelectedCar()

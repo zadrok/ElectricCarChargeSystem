@@ -22,9 +22,9 @@ public class DialogCreateCar extends Dialog
 	private JLabel currentChargeTitle;
 	private JTextField currentChargeInfo;
 	
-	public DialogCreateCar(GUI aGUI)
+	public DialogCreateCar(Simulator aSimulator)
 	{
-		super(aGUI, "Create Car", false);
+		super(aSimulator, "Create Car", false);
 		setSize(360,250);
 		
 		yOffset += yOffsetIncrement;

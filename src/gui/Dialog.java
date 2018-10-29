@@ -13,7 +13,7 @@ import model.*;
 @SuppressWarnings("serial")
 public class Dialog extends JDialog
 {
-	private GUI gui;
+	private Simulator simulator;
 	
 	protected int xInfoOffset;
 	protected int yOffset;
@@ -22,12 +22,12 @@ public class Dialog extends JDialog
 	protected int rightMargin;
 	protected int height;
 	
-	public Dialog(GUI aGUI, String aTitle, boolean aIsModel)
+	public Dialog(Simulator aSimulator, String aTitle, boolean aIsModel)
 	{
-		super(aGUI.getFrame(), aTitle, aIsModel);
+		super(aSimulator.getGUI().getFrame(), aTitle, aIsModel);
 		setLayout(null);
 		setVisible(false);
-		gui = aGUI;
+		simulator = aSimulator;
 		
 		xInfoOffset = 100;
 		yOffset = 0;
@@ -37,13 +37,18 @@ public class Dialog extends JDialog
 		height = 20;
 	}
 	
+	public Simulator getSimulator()
+	{
+		return simulator;
+	}
+	
 	public GUI getGUI()
 	{
-		return gui;
+		return getSimulator().getGUI();
 	}
 	
 	public ChargerSystem getChargerSystem()
 	{
-		return getGUI().getChargerSystem();
+		return getSimulator().getChargerSystem();
 	}
 }
