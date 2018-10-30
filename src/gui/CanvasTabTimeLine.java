@@ -11,9 +11,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import boot.GlobalVariables;
-import model.Car;
-import model.ChargerSystem;
-import model.ChargerSystem.Tuple;
+import model.*;
 
 @SuppressWarnings("serial")
 public class CanvasTabTimeLine extends CanvasTab
@@ -174,13 +172,13 @@ public class CanvasTabTimeLine extends CanvasTab
 		int block = 30;
 		
 		// expired / used queue
-		for ( Tuple<Car, Long, Long> lItem : getChargerSystem().getChargeQueueOLD() )
+		for ( QueueItem lItem : getChargerSystem().getChargeQueueOLD() )
 		{
 			
 		}
 		
 		// current / future queue
-		for ( Tuple<Car, Long, Long> lItem : getChargerSystem().getChargeQueue() )
+		for ( QueueItem lItem : getChargerSystem().getChargeQueue() )
 		{
 			
 		}

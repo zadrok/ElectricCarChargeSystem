@@ -27,27 +27,6 @@ import jade.wrapper.gateway.JadeGateway;
 
 public class ChargerSystem 
 {
-	@SuppressWarnings("hiding")
-	// Class for a Car/Long/Long tuple used for start and end charging times
-	public class Tuple<Car, Long, Long1>
-	{
-		private Car car;
-		private long timeStart;
-		private long timeEnd;
-		public Tuple(Car car, long timeStart, long timeEnd)
-		{
-			this.car = car;
-			this.timeStart = timeStart;
-			this.timeEnd = timeEnd;
-		}
-		public Car car() { return this.car;}
-		public long timeStart() { return this.timeStart;}
-		public long timeEnd() { return this.timeEnd;}
-		public void setCar(Car car) { this.car = car;}
-		public void setTimeStart(long time) { this.timeStart = time;}
-		public void setTimeEnd(long time) { this.timeEnd = time;}
-	}
-	
 	private Runtime runtime;
 	private Profile profileCars;
 	private ContainerController containerCars;
@@ -63,8 +42,8 @@ public class ChargerSystem
 	private Thread chargeThreadThread;
 	
 	private Random random;
-	private List<Tuple<Car, Long, Long>> chargeQueue;
-	private List<Tuple<Car, Long, Long>> chargeQueueOLD;
+	private ArrayList<QueueItem> chargeQueue;
+	private ArrayList<QueueItem> chargeQueueOLD;
 	
 	private long clockStartTime;
 	private long clockRunTime;
@@ -78,8 +57,8 @@ public class ChargerSystem
 		
 		// Create charge points, queue and thread
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
-		chargeQueue = new ArrayList<Tuple<Car, Long, Long>>();
-		chargeQueueOLD = new ArrayList<Tuple<Car, Long, Long>>();
+		chargeQueue = new ArrayList<>();
+		chargeQueueOLD = new ArrayList<>();
 		chargeThread = new ChargeThread(chargePoints, GlobalVariables.chargeInterval);
 		chargeThreadThread = new Thread(chargeThread);
 		chargeThreadThread.start();
@@ -361,14 +340,15 @@ public class ChargerSystem
 	public boolean requestCharge(Car aCar, long aTimeStart, long aTimePeriod)
 	{
 		// Don't allow a car to be added to the queue twice
-		for(Tuple<Car, Long, Long> a : chargeQueue)
+		for( QueueItem lItem : chargeQueue )
 		{
-			if(a.car().getID() == aCar.getID())
+			if( lItem.getCar() == aCar )
 				return false;
 		}
+		
 		long tryStartTime = aTimeStart + getTimeSeconds();
 		System.out.println("Charging at " + tryStartTime + " for " + aTimePeriod);
-		chargeQueue.add(new Tuple<Car, Long, Long>(aCar, tryStartTime, aTimePeriod));
+		chargeQueue.add(new QueueItem(aCar, tryStartTime, aTimePeriod));
 		return true;
 	}
 	
@@ -393,13 +373,13 @@ public class ChargerSystem
 	}
 	
 	// Get charge queue
-	public List<Tuple<Car, Long, Long>> getChargeQueue()
+	public ArrayList<QueueItem> getChargeQueue()
 	{
 		return chargeQueue;
 	}
 	
 	// Get OLD charge queue
-	public List<Tuple<Car, Long, Long>> getChargeQueueOLD()
+	public ArrayList<QueueItem> getChargeQueueOLD()
 	{
 		return chargeQueueOLD;
 	}

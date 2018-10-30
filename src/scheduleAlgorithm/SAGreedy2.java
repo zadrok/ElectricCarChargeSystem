@@ -8,11 +8,9 @@
 
 package scheduleAlgorithm;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import model.Car;
-import model.ChargerSystem;
-import model.ChargerSystem.Tuple;
+import model.*;
 
 public class SAGreedy2 extends ScheduleAlgorithm
 {
@@ -26,13 +24,13 @@ public class SAGreedy2 extends ScheduleAlgorithm
 	public void run()
 	{
 		// Attempt to charge the top car in the queue
-		List<Tuple<Car, Long, Long>> queue = getChargerSystem().getChargeQueue();
+		ArrayList<QueueItem> queue = getChargerSystem().getChargeQueue();
 		for(int i = queue.size()-1; i >= 0; --i)
 		{
 			if(getChargerSystem().getTimeSeconds() >= queue.get(i).timeStart())
 			{
 				// If we successfully start charging the car, we can remove it from the queue
-				if(getChargerSystem().tryChargeCar(queue.get(i).car(), queue.get(i).timeEnd()))
+				if(getChargerSystem().tryChargeCar(queue.get(i).getCar(), queue.get(i).timeEnd()))
 				{
 					getChargerSystem().getChargeQueueOLD().add( queue.get(i) );
 					queue.remove(i);
