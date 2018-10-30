@@ -23,6 +23,7 @@ public class SideBar extends JPanel
 	private SideBarTabCar tabCar;
 	private SideBarTabChargePoint tabChargePoint;
 	private SideBarTabKey tabKey;
+	private SideBarTabCarList tabCarList;
 	
 	public SideBar(Simulator aSimulator, int x, int y, int width, int height)
 	{
@@ -38,12 +39,14 @@ public class SideBar extends JPanel
 		tabMasSch = new SideBarTabMasterScheduler(this);
 		tabCar = new SideBarTabCar(this);
 		tabChargePoint = new SideBarTabChargePoint(this);
+		tabCarList = new SideBarTabCarList(this);
 		tabKey = new SideBarTabKey(this);
 		
 		tabPane.add("Options", tabOptions);
 		tabPane.add("Master Scheduler", tabMasSch);
 		tabPane.add("Car", tabCar);
 		tabPane.add("Charge Point", tabChargePoint);
+		tabPane.add("Car List", tabCarList);		
 		tabPane.add("Key", tabKey);
 		
 		add( tabPane );
@@ -54,6 +57,9 @@ public class SideBar extends JPanel
 		setBounds( x,y,width,height );
 		if ( tabPane != null )
 			tabPane.setBounds(0, 0, getWidth(), getHeight());
+		
+		if ( tabCarList != null )
+			tabCarList.updateSize(0, 0, getWidth(), getHeight());
 	}
 	
 	public void paintComponent(Graphics g)
@@ -69,6 +75,11 @@ public class SideBar extends JPanel
 		tabMasSch.refresh();
 		tabCar.refresh();
 		tabChargePoint.refresh();
+	}
+	
+	public void refreshCarList()
+	{
+		tabCarList.refresh();
 	}
 	
 	public GUI getGUI()

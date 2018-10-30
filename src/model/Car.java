@@ -71,6 +71,13 @@ public class Car extends Agent
 		// flags are used to determine which chargers the car can use. 1 is the default charging flag
 		flags |= aFlags;
 	}
+	
+	// override of toString
+	@Override
+	public String toString()
+	{
+		return getLocalName();
+	}
 
 	// Used to add a behaviour to the car
 	protected void setup()

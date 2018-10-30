@@ -140,6 +140,8 @@ public class SideBarTabOptions extends SideBarTab
 				{
 					getSimulator().showDialogCreateCar();
 				}
+				
+				sideBar.refreshCarList();
 			}
 		};
 		
@@ -164,6 +166,8 @@ public class SideBarTabOptions extends SideBarTab
 				{
 					getSimulator().showDialogCreateChargePoint();
 				}
+				
+				sideBar.refreshCarList();
 			}
 		};
 	}
