@@ -18,6 +18,11 @@ public class ChargeTime
 		day = (durationInMillis / (60 * 60 * 24));
 	}
 	
+	public void print()
+	{
+		System.out.println( String.format("DAY: %02d - TIME: %02d:%02d:%02d", day, hour, minute, second) );
+	}
+	
 	public long[] subMinutes(int aNumBlocks, int aBlockSize)
 	{
 		long h = hour;

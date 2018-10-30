@@ -27,6 +27,7 @@ public class MasterScheduler extends Agent
 		super();
 		chargerSystem = aSys;
 		
+		// add any new algorithms to this list so it can be selected in the GUI
 		algos = new ArrayList<>();
 		algos.add( new SAGreedy( aSys, "greedy" ) );
 		algos.add( new SAGreedy2( aSys, "greedy2" ) );

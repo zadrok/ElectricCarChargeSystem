@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 
 import boot.GlobalVariables;
 import model.*;
@@ -18,6 +19,8 @@ public class CanvasTabTimeLine extends CanvasTab
 {
 	// offset from zero, for scrolling
 	private double offsetVal;
+	// general offset;
+	private int margin;
 	// distance from left wall
 	private int xMargin;
 	// distance from top
@@ -29,20 +32,181 @@ public class CanvasTabTimeLine extends CanvasTab
 	// block of time size
 	private int block;
 	
+	private int x;
+	private int y;
+	
+	private int offScreenWidth;
+	private int offScreenHeight;
+	
+	
 	public CanvasTabTimeLine(Canvas aCanvas)
 	{
 		super(aCanvas);
 		
 		offsetVal = 0;
-		xMargin = 5;
-		yMargin = 5;
+		margin = 20;
+		xMargin = margin;
+		yMargin = margin;
 		widthIncrement = 30;
 		heightIncrement = 30;
 		block = 30;
 		
+		x = xMargin*2;
+		y = yMargin;
+		offScreenWidth = 35;
+		offScreenHeight = 80;
+		
 		addMouseListener( mouseListener() );
 		addMouseMotionListener( mouseMotionListener() );
 		addMouseWheelListener( mouseWheelListener() );
+	}
+	
+	public void paintComponent(Graphics g)
+    {
+		Graphics2D g2 = (Graphics2D) g;
+		// time since last run, use to smooth animations
+		double deltaTime = getLooper().getDeltaTime();
+		// current simulation run time
+		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
+		// clear screen white
+		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), ColorIndex.canvasFill );
+		
+		drawGraphBack(g2,deltaTime);
+		drawBlocks(g2,deltaTime);
+		drawGraphFront(g2,deltaTime);
+    }
+	
+	private void drawGraphBack(Graphics2D g2, double aDeltaTime)
+	{
+		// timeLine draw area
+		fillRect( g2, new Rectangle( x, y, getWidth()-offScreenWidth, getHeight()-offScreenHeight ), Color.LIGHT_GRAY );
+	}
+	
+	private void drawGraphFront(Graphics2D g2, double aDeltaTime)
+	{
+		// draw horizontal lines
+		int count = 0;
+		Rectangle rect = new Rectangle( x, y, getWidth()-offScreenWidth, 0 );
+		for ( int i = 0; i < getHeight() - heightIncrement - yMargin; i += heightIncrement )
+		{
+			drawLine( g2, rect, Color.BLACK );
+			rect.y += heightIncrement;
+			count++;
+		}
+		
+		// draw time on horizontal lines
+		// make this number the center value
+		int centerLineNum = count/4;
+		
+		// draw horizontal lines test (time)
+		rect = new Rectangle( x-35, y+5, 0, 0 );
+		for ( int i = 0; i < count; i++ )
+		{
+			int numBlocks = count - ( centerLineNum - i );
+			ChargeTime ct = new ChargeTime(0);
+			long[] times = ct.addMinutes(block*(i-centerLineNum));
+			
+			String s = String.format("%02d:%02d", times[0], times[1]);
+			drawString(g2, s, rect.x, rect.y, Color.BLACK);
+			rect.y += heightIncrement;
+		}
+		
+		// draw vertical lines
+		rect = new Rectangle( x, y, 0, getHeight()-offScreenHeight );
+		for ( int i = 0; i < getWidth() - widthIncrement - xMargin; i += widthIncrement )
+		{
+			drawLine( g2, rect, Color.BLACK );
+			rect.x += widthIncrement;
+		}
+	}
+	
+	private ArrayList<TimeLineBlock> makeblocks()
+	{
+		ArrayList<TimeLineBlock> tlBlocks = new ArrayList<>();
+		
+		// for each ChargePoint find all queue items for it
+		for ( ChargePoint chrPnt : getChargerSystem().getChargePoints() )
+		{
+			TimeLineBlock tlBlock = findItems( chrPnt );
+			
+			// if any items were added to the block then add it to list
+			if ( tlBlock.items.size() > 0 )
+				tlBlocks.add( tlBlock );
+		}
+				
+		return tlBlocks;
+	}
+	
+	private TimeLineBlock findItems(ChargePoint aChargePoint)
+	{
+		TimeLineBlock tlBlock = new TimeLineBlock( aChargePoint );
+		
+		// expired / used queue
+		for ( QueueItem lItem : getChargerSystem().getChargeQueueOLD() )
+		{
+			if ( lItem.getChargePoint() == aChargePoint )
+				tlBlock.add( lItem );
+		}
+		
+		// current / future queue
+		for ( QueueItem lItem : getChargerSystem().getChargeQueue() )
+		{
+			if ( lItem.getChargePoint() == aChargePoint )
+				tlBlock.add( lItem );
+		}
+		
+		return tlBlock;
+	}
+	
+	private void drawBlocks(Graphics2D g2, double aDeltaTime)
+	{
+		// a list for each chargePoint and all of the Queue items that go to it
+		ArrayList<TimeLineBlock> tlBlocks = makeblocks();
+		// catch all for any item that didn't go to a chargePoint
+		tlBlocks.add( findItems(null) );
+		
+		int xBlock = x;
+		int yBlock = y;
+		
+		// draw each block as a row, each item is a column
+		// order/time/length of time don't matter yet
+		for ( int i = 0; i < tlBlocks.size(); i++ )
+		{
+			// current Time Line block
+			TimeLineBlock tlBlock = tlBlocks.get(i);
+			
+			// draw name of chargePoint at top of column
+			String name = "";
+			if ( tlBlock.chargePoint != null )
+				name += tlBlock.chargePoint.getChargeRate();
+			else
+				name += "null";
+			drawString(g2, name, xBlock+(widthIncrement/4), yBlock, Color.BLACK);
+			
+			// draw blocks
+			for ( int j = 0; j < tlBlock.items.size(); j++ )
+			{
+				// current item in block
+				QueueItem item = tlBlock.items.get(j);
+				
+				int yItem = (int) (yBlock + item.timeStart());
+				
+//				ChargeTime ct = new ChargeTime( item.timeStart() );
+//				ct.print();
+//				System.out.println( yItem );
+				
+				fillRect(g2, new Rectangle(xBlock, yItem, widthIncrement, heightIncrement), Color.BLUE);
+			}
+			
+			// go to next column
+			xBlock += widthIncrement;
+		}
+		
+	}
+	
+	public ChargerSystem getChargerSystem()
+	{
+		return getCanvas().getSimulator().getChargerSystem();
 	}
 	
 	private MouseWheelListener mouseWheelListener()
@@ -98,95 +262,22 @@ public class CanvasTabTimeLine extends CanvasTab
 			}
 		};
 	}
+}
+
+class TimeLineBlock
+{
+	public ChargePoint chargePoint;
+	public ArrayList<QueueItem> items;
 	
-	public void paintComponent(Graphics g)
-    {
-		Graphics2D g2 = (Graphics2D) g;
-		// time since last run, use to smooth animations
-		double deltaTime = getLooper().getDeltaTime();
-		// current simulation run time
-		ChargeTime ct = new ChargeTime(GlobalVariables.runTime);
-		// clear screen white
-		fillRect( g2, new Rectangle(0,0,getWidth(),getHeight()), ColorIndex.canvasFill );
-		
-		drawGraphBack(g2,deltaTime,ct);
-		drawBlocks(g2,deltaTime,ct);
-		drawGraphFront(g2,deltaTime,ct);
-    }
-	
-	private void drawGraphBack(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
+	public TimeLineBlock(ChargePoint aPoint)
 	{
-		
+		chargePoint = aPoint;
+		items = new ArrayList<>();
 	}
 	
-	private void drawGraphFront(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
+	public void add(QueueItem aItem)
 	{
-		
-		
-		// draw horizontal lines
-		int count = 0;
-		Rectangle rect = new Rectangle(xMargin, yMargin, getWidth() - xMargin - widthIncrement, 0);
-		for ( int i = 0; i < getHeight() - heightIncrement - yMargin; i += heightIncrement )
-		{
-			drawLine( g2, rect, Color.BLACK );
-			rect.y += heightIncrement;
-			count++;
-		}
-		
-		// draw time on horizontal lines
-		// make this number the center value
-		int centerLineNum = count/4;
-		
-//		------------------
-//		-02:00------------
-//		------------------
-//		00:00------------- center point is focus
-//		------------------
-//		+02:00------------
-//		------------------
-		
-		
-		// draw horizontal lines test (time)
-		rect = new Rectangle(xMargin, yMargin, getWidth() - xMargin - widthIncrement, 0);
-		for ( int i = 0; i < count; i++ )
-		{
-			int numBlocks = count - ( centerLineNum - i );
-			long[] times = aCT.addMinutes(block*(i-centerLineNum));
-			
-			String s = String.format("%02d:%02d", times[0], times[1]);
-			drawString(g2, s, rect.x, rect.y, Color.BLACK);
-			rect.y += heightIncrement;
-		}
-		
-		// draw vertical lines
-		rect = new Rectangle(xMargin, yMargin, 0, getHeight() - yMargin - heightIncrement);
-		for ( int i = 0; i < getWidth() - widthIncrement - xMargin; i += widthIncrement )
-		{
-			drawLine( g2, rect, Color.BLACK );
-			rect.x += widthIncrement;
-		}
-	}
-	
-	private void drawBlocks(Graphics2D g2, double aDeltaTime, ChargeTime aCT)
-	{
-		int block = 30;
-		
-		// expired / used queue
-		for ( QueueItem lItem : getChargerSystem().getChargeQueueOLD() )
-		{
-			
-		}
-		
-		// current / future queue
-		for ( QueueItem lItem : getChargerSystem().getChargeQueue() )
-		{
-			
-		}
-	}
-	
-	public ChargerSystem getChargerSystem()
-	{
-		return getCanvas().getSimulator().getChargerSystem();
+		items.add( aItem );
 	}
 }
 

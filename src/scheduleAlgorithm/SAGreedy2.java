@@ -14,6 +14,13 @@ import model.*;
 
 public class SAGreedy2 extends ScheduleAlgorithm
 {
+	
+	
+//	this is a clone of the other GREEDY to test if the algorithm selection is working
+//	this can be removed at some point
+	
+	
+	
 	// Constructor for algorithm
 	public SAGreedy2(ChargerSystem aChargeSys, String aName)
 	{

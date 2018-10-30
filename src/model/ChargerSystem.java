@@ -138,8 +138,8 @@ public class ChargerSystem
 	// Creates charger points based on defaults
 	public void initChargerPoints()
 	{
-		// Creating charger points
-		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge, 2 );
+//		// Creating charger points
+//		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge, 2 );
 		
 		// Create Small charge points
 		for(int i = 0; i < GlobalVariables.numChargePointsSmall; ++i)
