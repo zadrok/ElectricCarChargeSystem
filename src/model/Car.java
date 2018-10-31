@@ -10,6 +10,7 @@
 package model;
 
 import boot.GlobalVariables;
+import gui.ChargeTime;
 import jade.core.Agent;
 
 // Cars typically range from around 20kWh (~120km / charge) to
@@ -78,8 +79,85 @@ public class Car extends Agent
 	{
 		return getLocalName();
 	}
+	
+	//return array of two strings, start charge time and charge time duration
+	public String[] getChargeTimes()
+	{
+		String[] times = new String[2];
+		
+		// find longest time a car can charge
+		
+		int highestStartIndex = 0;
+		int highestChainLength = 0;
+		
+		int currentStartIndex = 0;
+		int currentChainLength = 0;
+		
+		int numberLookingFor = 0;
+		
+		// look for the longest change of 0
+		
+		for ( int i = 0; i < profile.getUsage().size(); i++ )
+		{
+			// the current value
+			int x = profile.getUsage().get(i);
+			
+			if ( x == numberLookingFor )
+			{
+				if ( currentChainLength == 0 )
+					currentStartIndex = i;
+				
+				currentChainLength += 1;
+			}
+			else
+			{
+				currentChainLength = 0;
+			}
+			
+			if ( currentChainLength > highestChainLength )
+			{
+				highestStartIndex = currentStartIndex;
+				highestChainLength = currentChainLength;
+			}
+		}
+		
+//		System.out.println( profile.getUsage().toString() );
+//		System.out.println( "profile.getUsage().size() " + profile.getUsage().size() );
+//		System.out.println( "highestStartIndex " + highestStartIndex );
+//		System.out.println( "highestChainLength " + highestChainLength );
+//		System.out.println( "--------------------------------------------- " );
+		
+		
+		// new we know the index to start from and for how long to go for
+		// we can use the number of hours and polls per hour to convert this to a time
+		// we use blocks of time in 30 minutes to take getTimesPerHour() / 2
+		// hour and duration are in 30 minute blocks so multiply by 30 to get minutes
+		long start = (long) Math.ceil( highestStartIndex / ( profile.getTimesPerHour() / 2 ) ) * 30 * 60;
+		long duration = (long) Math.floor( highestChainLength / ( profile.getTimesPerHour() / 2 ) ) * 30 * 60;
+		
+		// limit duration to 4 hours
+		if ( duration > 4*60*60 )
+			duration = 4*60*60;
+		
+//		System.out.println( "hour " + hour );
+//		new ChargeTime(hour).print();
+//		System.out.println( "duration " + duration );
+//		new ChargeTime(duration).print();
+		
+		// if the current time is past the start time
+		// find the current time days and add that number of days to the time
+		// adjust for how long the system has been running
+		ChargeTime ct = new ChargeTime( GlobalVariables.runTime );
+		if ( GlobalVariables.runTime >= start-60 )
+			start += ( ct.day + 1 ) * ( 24 * 60 * 60 );
+		
+		times[0] = ""+start;
+		times[1] = ""+duration;
+		
+		return times;
+	}
 
-	// Used to add a behaviour to the car
+	// Used to add a behavior to the car
 	protected void setup()
 	{
 		addBehaviour( new CarBehaviourBasic( this ) );

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import boot.GlobalVariables;
 import jade.core.AID;
@@ -42,23 +44,26 @@ public class ChargerSystem
 	private Thread chargeThreadThread;
 	
 	private Random random;
-	private ArrayList<QueueItem> chargeQueue;
-	private ArrayList<QueueItem> chargeQueueOLD;
+	private List<QueueItem> chargeQueue;
+	private List<QueueItem> chargeQueueOLD;
 	
 	private long clockStartTime;
 	private long clockRunTime;
 	
+	private final Lock queueLock; 
+	
 	// Constructor for charger system
 	public ChargerSystem()
 	{
+		queueLock = new ReentrantLock(); 
 		random = new Random();
 		clockStartTime = System.currentTimeMillis();
 		clockRunTime = 0;
 		
 		// Create charge points, queue and thread
 		chargePoints = Collections.synchronizedList(new ArrayList<ChargePoint>());
-		chargeQueue = new ArrayList<>();
-		chargeQueueOLD = new ArrayList<>();
+		chargeQueue = Collections.synchronizedList(new ArrayList<QueueItem>());
+		chargeQueueOLD = Collections.synchronizedList(new ArrayList<QueueItem>());
 		chargeThread = new ChargeThread(chargePoints, GlobalVariables.chargeInterval);
 		chargeThreadThread = new Thread(chargeThread);
 		chargeThreadThread.start();
@@ -130,17 +135,11 @@ public class ChargerSystem
 			int current = random.nextInt( max - base ) + base;
 			createCarAgent( max, current );
 		}
-
-		// Creating car with extra flags
-//		createCarAgent( getCarAgents().size(), GlobalVariables.carBatterySizeLarge, 10, (2 | 4) );
 	}
 	
 	// Creates charger points based on defaults
 	public void initChargerPoints()
 	{
-//		// Creating charger points
-//		createChargePoint( GlobalVariables.chargePointChargeRateSizeLarge, 2 );
-		
 		// Create Small charge points
 		for(int i = 0; i < GlobalVariables.numChargePointsSmall; ++i)
 		{
@@ -264,6 +263,14 @@ public class ChargerSystem
 		System.out.println("Done sending message to all Cars");
 	}
 	
+	public int getRandomInt(int aUpperBounds)
+	{
+		if ( aUpperBounds == 0 )
+			return 0;
+		
+		return random.nextInt( Math.abs( aUpperBounds ) );
+	}
+	
 	// Send a message to the master scheduler
 	public void messageMasterScheduler(int aMeggageType, String aMessage)
 	{
@@ -312,6 +319,18 @@ public class ChargerSystem
 		return carAgents;
 	}
 	
+	// Get car agent with matching name
+	public Car getCarAgent(String aName)
+	{
+		for ( Car car : getCarAgents() )
+		{
+			if ( car.getLocalName().contentEquals( aName ) )
+				return car;
+		}
+		
+		return null;
+	}
+	
 	// Get master scheduler
 	public MasterScheduler getMasterScheduler()
 	{
@@ -330,28 +349,6 @@ public class ChargerSystem
 		return chargeThread.getCarChargeStatus(aCar);
 	}
 	
-	// Request a charge for a car without timestamps
-	public boolean requestCharge(Car aCar)
-	{
-		return requestCharge(aCar, 0, 60);
-	}
-	
-	// Request a charge using timestamp
-	public boolean requestCharge(Car aCar, long aTimeStart, long aTimePeriod)
-	{
-		// Don't allow a car to be added to the queue twice
-		for( QueueItem lItem : chargeQueue )
-		{
-			if( lItem.getCar() == aCar )
-				return false;
-		}
-		
-		long tryStartTime = aTimeStart + getTimeSeconds();
-		System.out.println("Charging at " + tryStartTime + " for " + aTimePeriod);
-		chargeQueue.add(new QueueItem(aCar, tryStartTime, aTimePeriod));
-		return true;
-	}
-	
 	// Try to attach car to charge point
 	public boolean tryChargeCar(Car aCar, long chargeTime)
 	{
@@ -366,6 +363,139 @@ public class ChargerSystem
 		return false;
 	}
 	
+	// charge points will switch out cars if there scheduled time is up
+	public void checkChargePoints()
+	{
+		queueLock();
+		try
+		{
+//			System.out.println( "getChargeQueue().size() " + getChargeQueue().size() );
+//			System.out.println( "getChargeQueueOLD().size() " + getChargeQueueOLD().size() );
+			
+			// go through each charge point
+			for ( ChargePoint point : getChargePoints() )
+			{
+				// find the current queue item that is active
+				QueueItem item = getCurrentActiveQueueItem(point);
+				if ( item == null )
+				{
+//					System.out.println( "item == null" );
+					continue;
+				}
+				if ( point == null )
+				{
+//					System.out.println( "point == null" );
+					continue;
+				}
+//				if ( point.getCar() == null )
+//				{
+//					System.out.println( "point.getCar() == null" );
+//					continue;
+//				}
+				if ( item.getCar() == null )
+				{
+//					System.out.println( "item.getCar() == null" );
+					continue;
+				}
+				
+//				System.out.println( "not null" );
+					
+//				System.out.println( "QueueItem car " + item.getCar().toString() );
+				// if null then there is no queued car
+//				if ( item == null )
+//				{
+//					// remove item
+//					getChargeQueueOLD().add( item );
+//					getChargeQueue().remove( item );
+//				}
+				// check to see if the correct car is charging
+//				System.out.println( " point car " + point.getCar().getID() + " - item car " + item.getCar().getID() );
+				if ( point.getCar() == null )
+				{
+					point.AddCar(item.getCar(), item.timeEnd());
+				}
+				else if ( point.getCar() != item.getCar() )
+				{
+//					System.out.println( "not same car" );
+//					System.out.println( "disconnectCar " );
+					// disconnect current car
+					point.disconnectCar();
+					// put new car on
+					point.AddCar(item.getCar(), item.timeEnd());
+				}
+			}
+			
+			// go through all queue items 
+			// if an item time is over move it to old queue
+			ArrayList<QueueItem> toMove = new ArrayList<>();
+			for ( QueueItem item : getChargeQueue() )
+			{
+				if ( item.timeStart() + item.timeEnd() <= GlobalVariables.runTime )
+				{
+//					System.out.println( "moving to old" );
+					// remove item
+					toMove.add( item );
+				}
+			}
+			
+			for ( QueueItem item : toMove )
+			{
+				getChargeQueueOLD().add( item );
+				getChargeQueue().remove( item );
+			}
+			
+		}
+		finally
+		{
+			queueUnlock();
+		}
+	}
+	
+	public void queueLock()
+	{
+		queueLock.lock();
+	}
+	
+	public void queueUnlock()
+	{
+		queueLock.unlock();
+		
+	}
+	
+	// return current active queue item for a charge poing
+	public QueueItem getCurrentActiveQueueItem(ChargePoint aPoint)
+	{
+		// go through all charge points
+		for ( QueueItem item : getChargeQueue() )
+		{
+			// find charge point that is currently being looked for
+			// and that is active
+			if ( item.getChargePoint() == aPoint )
+			{
+//				System.out.println( "item.getChargePoint() == aPoint" );
+				if ( item.isActive() )
+				{
+//					System.out.println( "item.isActive()" );
+					return item;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	// check if car is in queue
+	public boolean inQueue(Car aCar)
+	{
+		for( QueueItem lItem : getChargeQueue() )
+		{
+			if ( lItem.getCar() == aCar )
+				return true;
+		}
+		
+		return false;
+	}
+	
 	// Get all charge points
 	public List<ChargePoint> getChargePoints()
 	{
@@ -373,13 +503,13 @@ public class ChargerSystem
 	}
 	
 	// Get charge queue
-	public ArrayList<QueueItem> getChargeQueue()
+	public List<QueueItem> getChargeQueue()
 	{
 		return chargeQueue;
 	}
 	
 	// Get OLD charge queue
-	public ArrayList<QueueItem> getChargeQueueOLD()
+	public List<QueueItem> getChargeQueueOLD()
 	{
 		return chargeQueueOLD;
 	}

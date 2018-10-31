@@ -71,7 +71,7 @@ public class ChargeThread implements Runnable
 		{
 			// increment run time
 //			GlobalVariables.runTime++;
-			GlobalVariables.runTime += 1;
+			GlobalVariables.runTime += GlobalVariables.timeScale/GlobalVariables.chargeInterval;
 			
 			
 			// Increment car charge

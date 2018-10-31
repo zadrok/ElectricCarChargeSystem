@@ -72,9 +72,11 @@ public class ChargePoint
 	}
 	
 	// Disconnect car from charger
-	public Car DisconnectCar()
+	public Car disconnectCar()
 	{
 		Car lReturn = connectedCar;
+		if ( connectedCar == null )
+			return null;
 		connectedCar.setCarState(STATE.IDLE);
 		connectedCar = null;
 		return lReturn;
@@ -105,7 +107,7 @@ public class ChargePoint
 				msg.addReceiver(new AID(connectedCar.getLocalName(), AID.ISLOCALNAME));
 				masSch.send(msg);
 				
-				DisconnectCar();
+				disconnectCar();
 			}
 			// Determine if car charge time has expired
 			if(expireTime <= System.currentTimeMillis())
@@ -116,7 +118,7 @@ public class ChargePoint
 				msg.addReceiver(new AID(connectedCar.getLocalName(), AID.ISLOCALNAME));
 				masSch.send(msg);
 				
-				DisconnectCar();
+				disconnectCar();
 			}
 		}
 	}

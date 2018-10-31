@@ -7,8 +7,6 @@
 
 package model;
 
-import java.util.ArrayList;
-
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -39,45 +37,76 @@ public class MasterSchedulerBehaviourBasic extends CyclicBehaviour
 			// wantCharge implies the car wants to schedule a charging time
 			if ( msg.getContent().startsWith( "wantCharge" ) )
 			{
-				ACLMessage reply = msg.createReply();
-				reply.setPerformative( ACLMessage.INFORM );
-				// Default assumption is a fail to charge
-				reply.setContent( "wantCharge fail" );
-				// Get all car agents
-				ArrayList<Car> cars = masSch.getChargerSystem().getCarAgents();
-				for(Car car : cars)
-				{
-					// Find specific car
-					if(car.getAID().getLocalName().equals(msg.getSender().getLocalName()))
-					{
-						String[] split = msg.getContent().split("\\s+");
-						for(int i = 0; i < split.length; ++i)
-						{
-							// Get requested time slice
-							if(split[i].equals("--time"))
-							{
-								// If no valid values, assume 00:00 and 06:00
-								String start = split.length >= i+1 ? split[i+1] : "00:00";
-								String end = split.length >= i+2 ? split[i+2] : "06:00";
-								String[] valStart = start.split(":");
-								String[] valEnd = end.split(":");
-								// Try to request a charge
-								if(masSch.getChargerSystem().requestCharge(car, Integer.parseInt(valStart[0])*60 + Integer.parseInt(valStart[1]), Integer.parseInt(valEnd[0])*60 + Integer.parseInt(valEnd[1])))
-								{
-									// Charge is ok
-									reply.setContent( "wantCharge ok" );
-								}
-							}
-						}
-					}
-				}
-				
-				masSch.send( reply );
+				wantCharge( msg );
 			}
 			
 		}
 		
-		masSch.getScheduleAlgorithm().run();
+		// tell charge points to switch cars on them if it is time
+		masSch.getChargerSystem().checkChargePoints();
+	}
+	
+	private void wantCharge(ACLMessage msg)
+	{
+		// prepare reply
+		ACLMessage reply = msg.createReply();
+		reply.setPerformative( ACLMessage.INFORM );
+		// Default assumption is a fail to charge
+		reply.setContent( "wantCharge fail" );
+		// Get car agent
+		Car car = masSch.getChargerSystem().getCarAgent( msg.getSender().getLocalName() );
+		// split message into parts
+		String[] split = msg.getContent().split( "\\s+" );
+		
+		for ( int i = 0; i < split.length; i++ )
+		{
+			// Get requested time slice
+			if ( split[i].equals("--time") )
+			{
+				// get next two values, if fail ask for resend
+				long startTime = 0;
+				long chargeTime = 0;
+				try
+				{
+					// convert strings to longs
+					String start = split[i+1];
+					String end = split[i+2];
+					startTime = Long.parseLong( start );
+					chargeTime = Long.parseLong( end );
+				}
+				catch ( Exception e )
+				{
+					// ask for resend
+					reply.setContent( "wantCharge resend" );
+					break;
+				}
+				
+				// Try to request a charge
+				if ( masSch.getScheduleAlgorithm().requestCharge(car, startTime, chargeTime) )
+				{
+					// Charge is ok
+					reply.setContent( "wantCharge ok" );
+				}
+				else
+				{
+					// if requestCharge was false send one of two replies
+					// one: if car is already in the queue then tell it that
+					if ( masSch.getChargerSystem().inQueue(car) )
+					{
+						reply.setContent( "wantCharge alreadyInQueue" );
+					}
+					// option 2, if not in queue already
+					// there was a problem in finding a time for the car so tell it to ask again with a different time if possible
+					else
+					{
+						reply.setContent( "wantCharge couldNotFindTime" );
+					}
+				}
+			}
+		}
+		
+		// send reply
+		masSch.send( reply );
 	}
 	
 	@Override

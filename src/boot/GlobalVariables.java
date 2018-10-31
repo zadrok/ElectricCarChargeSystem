@@ -30,10 +30,12 @@ public class GlobalVariables
 	public static int chargePointChargeRateSizeLarge;
 	
 	public static double timeScale;
+	public static double timeScaleBase;
 	
 	public static String masterSchedulerAlgorithm;
 	
 	public static long runTime;
+	public static long runTimeIncrement;
 	
 	public static int numCarsSmall;
 	public static int numCarsMedium;
@@ -61,6 +63,7 @@ public class GlobalVariables
 		chargePointChargeRateSizeLarge = obj.get("chargePointChargeRateSizeLarge").getAsInt();
 		
 		timeScale = obj.get("timeScale").getAsInt();
+		timeScaleBase = obj.get("timeScale").getAsInt();
 		
 		masterSchedulerAlgorithm = obj.get("masterSchedulerAlgorithm").getAsString();
 		

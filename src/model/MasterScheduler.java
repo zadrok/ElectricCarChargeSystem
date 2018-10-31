@@ -30,7 +30,7 @@ public class MasterScheduler extends Agent
 		// add any new algorithms to this list so it can be selected in the GUI
 		algos = new ArrayList<>();
 		algos.add( new SAGreedy( aSys, "greedy" ) );
-		algos.add( new SAGreedy2( aSys, "greedy2" ) );
+		algos.add( new SAGreedy( aSys, "greedy2" ) );
 		
 		// Pick scheduling algorithm
 		// pick based on what was in the config file

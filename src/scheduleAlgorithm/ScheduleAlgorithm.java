@@ -8,6 +8,7 @@
 
 package scheduleAlgorithm;
 
+import model.Car;
 import model.ChargerSystem;
 
 public class ScheduleAlgorithm
@@ -32,10 +33,10 @@ public class ScheduleAlgorithm
 		return name;
 	}
 	
-	// Run function
-	public void run()
+	// try and find a time to charge the car
+	public boolean requestCharge(Car aCar, long aTimeStart, long aTimePeriod)
 	{
-		
+		return false;
 	}
 	
 	// Get charger system referenced by algorithm

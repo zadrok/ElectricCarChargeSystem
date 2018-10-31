@@ -17,8 +17,6 @@ import model.*;
 @SuppressWarnings("serial")
 public class CanvasTabTimeLine extends CanvasTab
 {
-	// offset from zero, for scrolling
-	private double offsetVal;
 	// general offset;
 	private int margin;
 	// distance from left wall
@@ -32,18 +30,24 @@ public class CanvasTabTimeLine extends CanvasTab
 	// block of time size
 	private int block;
 	
-	private int x;
-	private int y;
+	private int xContent;
+	private int yContent;
+	private int wContent;
+	private int hContent;
+	
+	private int xContentOffset;
+	private int yContentOffset;
 	
 	private int offScreenWidth;
 	private int offScreenHeight;
+	
+	private Rectangle contentDrawArea;
 	
 	
 	public CanvasTabTimeLine(Canvas aCanvas)
 	{
 		super(aCanvas);
 		
-		offsetVal = 0;
 		margin = 20;
 		xMargin = margin;
 		yMargin = margin;
@@ -51,14 +55,35 @@ public class CanvasTabTimeLine extends CanvasTab
 		heightIncrement = 30;
 		block = 30;
 		
-		x = xMargin*2;
-		y = yMargin;
-		offScreenWidth = 35;
-		offScreenHeight = 80;
+		xContent = xMargin*2;
+		yContent = yMargin;
+		wContent = getWidth()-offScreenWidth;
+		hContent = getHeight()-offScreenHeight;
+		
+		wContent = (int) Math.floor( widthIncrement * ( wContent / widthIncrement ) );
+		hContent = (int) Math.floor( heightIncrement * ( hContent / heightIncrement ) );
+		
+		xContentOffset = 0;
+		yContentOffset = 0;
+		
+		offScreenWidth = 60;
+		offScreenHeight = 110;
+		
+		contentDrawArea = new Rectangle( xContent, yContent, wContent, hContent );
 		
 		addMouseListener( mouseListener() );
 		addMouseMotionListener( mouseMotionListener() );
 		addMouseWheelListener( mouseWheelListener() );
+	}
+	
+	public void updateSize(int x, int y, int width, int height)
+	{
+		setBounds( x,y,width,height );
+		wContent = getWidth()-offScreenWidth;
+		hContent = getHeight()-offScreenHeight;
+		wContent = (int) Math.floor( widthIncrement * ( wContent / widthIncrement ) );
+		hContent = (int) Math.floor( heightIncrement * ( hContent / heightIncrement ) );
+		contentDrawArea = new Rectangle( xContent, yContent, wContent, hContent );
 	}
 	
 	public void paintComponent(Graphics g)
@@ -79,44 +104,92 @@ public class CanvasTabTimeLine extends CanvasTab
 	private void drawGraphBack(Graphics2D g2, double aDeltaTime)
 	{
 		// timeLine draw area
-		fillRect( g2, new Rectangle( x, y, getWidth()-offScreenWidth, getHeight()-offScreenHeight ), Color.LIGHT_GRAY );
+		fillRect( g2, contentDrawArea, Color.LIGHT_GRAY );
 	}
 	
 	private void drawGraphFront(Graphics2D g2, double aDeltaTime)
 	{
 		// draw horizontal lines
 		int count = 0;
-		Rectangle rect = new Rectangle( x, y, getWidth()-offScreenWidth, 0 );
-		for ( int i = 0; i < getHeight() - heightIncrement - yMargin; i += heightIncrement )
+		int j = 0;
+		for ( int i = 0; i < yContent+hContent - heightIncrement; i += heightIncrement )
 		{
+			Rectangle rect = new Rectangle( xContent, yContent-yContentOffset, wContent, 0 );
+			rect.y += heightIncrement*j;
+			
+			if ( rect.y > yContent+hContent )
+			{
+				while ( rect.y > yContent+hContent )
+					rect.y -= hContent;
+			}
+			else if ( rect.y < yContent )
+			{
+				while ( rect.y < yContent )
+					rect.y += hContent;
+			}
+			
 			drawLine( g2, rect, Color.BLACK );
-			rect.y += heightIncrement;
 			count++;
+			j++;
 		}
 		
 		// draw time on horizontal lines
-		// make this number the center value
-		int centerLineNum = count/4;
 		
-		// draw horizontal lines test (time)
-		rect = new Rectangle( x-35, y+5, 0, 0 );
+		// draw horizontal lines text (time)
+		//draw white back ground for text
+		fillRect(g2, new Rectangle(0, 0, xContent, getHeight()), Color.WHITE);
 		for ( int i = 0; i < count; i++ )
 		{
-			int numBlocks = count - ( centerLineNum - i );
-			ChargeTime ct = new ChargeTime(0);
-			long[] times = ct.addMinutes(block*(i-centerLineNum));
+			Rectangle rect = new Rectangle( xContent-35, yContent+5-yContentOffset, 0, 0 );
+			rect.y += heightIncrement*i;
+			
+			int timesWrapped = 0;
+			
+			if ( rect.y > yContent+hContent )
+			{
+				while ( rect.y > yContent+hContent )
+				{
+					rect.y -= hContent;
+					timesWrapped--;
+				}
+			}
+			else if ( rect.y < yContent )
+			{
+				while ( rect.y < yContent )
+				{
+					rect.y += hContent;
+					timesWrapped++;
+				}
+			}
+			
+			int numBlocks = count - i;
+			ChargeTime ct = new ChargeTime( 0 );
+			long[] times = ct.addMinutes( ( timesWrapped * count * block ) + ( block * i ) );
 			
 			String s = String.format("%02d:%02d", times[0], times[1]);
 			drawString(g2, s, rect.x, rect.y, Color.BLACK);
-			rect.y += heightIncrement;
 		}
 		
 		// draw vertical lines
-		rect = new Rectangle( x, y, 0, getHeight()-offScreenHeight );
+		j = 0;
 		for ( int i = 0; i < getWidth() - widthIncrement - xMargin; i += widthIncrement )
 		{
+			Rectangle rect = new Rectangle( xContent+xContentOffset, yContent, 0, hContent );
+			rect.x += widthIncrement*j;
+			
+			if ( rect.x > xContent+wContent )
+			{
+				while ( rect.x > xContent+wContent )
+					rect.x -= wContent;
+			}
+			else if ( rect.x < xContent )
+			{
+				while ( rect.x < xContent )
+					rect.x += wContent;
+			}
+			
 			drawLine( g2, rect, Color.BLACK );
-			rect.x += widthIncrement;
+			j++;
 		}
 	}
 	
@@ -144,15 +217,27 @@ public class CanvasTabTimeLine extends CanvasTab
 		// expired / used queue
 		for ( QueueItem lItem : getChargerSystem().getChargeQueueOLD() )
 		{
-			if ( lItem.getChargePoint() == aChargePoint )
+			if ( lItem == null || aChargePoint == null )
+			{
+				continue;
+			}
+			else if ( lItem.getChargePoint() == aChargePoint )
+			{
 				tlBlock.add( lItem );
+			}
 		}
 		
 		// current / future queue
 		for ( QueueItem lItem : getChargerSystem().getChargeQueue() )
 		{
-			if ( lItem.getChargePoint() == aChargePoint )
+			if ( lItem == null || aChargePoint == null )
+			{
+				continue;
+			}
+			else if ( lItem.getChargePoint() == aChargePoint )
+			{
 				tlBlock.add( lItem );
+			}
 		}
 		
 		return tlBlock;
@@ -162,11 +247,8 @@ public class CanvasTabTimeLine extends CanvasTab
 	{
 		// a list for each chargePoint and all of the Queue items that go to it
 		ArrayList<TimeLineBlock> tlBlocks = makeblocks();
-		// catch all for any item that didn't go to a chargePoint
-		tlBlocks.add( findItems(null) );
 		
-		int xBlock = x;
-		int yBlock = y;
+		int xBlock = xContent;
 		
 		// draw each block as a row, each item is a column
 		// order/time/length of time don't matter yet
@@ -175,28 +257,41 @@ public class CanvasTabTimeLine extends CanvasTab
 			// current Time Line block
 			TimeLineBlock tlBlock = tlBlocks.get(i);
 			
-			// draw name of chargePoint at top of column
-			String name = "";
-			if ( tlBlock.chargePoint != null )
-				name += tlBlock.chargePoint.getChargeRate();
-			else
-				name += "null";
-			drawString(g2, name, xBlock+(widthIncrement/4), yBlock, Color.BLACK);
-			
 			// draw blocks
+			int h = 0;
 			for ( int j = 0; j < tlBlock.items.size(); j++ )
 			{
 				// current item in block
 				QueueItem item = tlBlock.items.get(j);
+
+				if ( item == null )
+					continue;
 				
-				int yItem = (int) (yBlock + item.timeStart());
+				if ( item.color == null )
+					item.color = ColorIndex.getRandomColor();
+				
+				int minutes = 60;
+				
+				int numBlocks = (int) ( item.timeStart() / minutes / block ) ;
+				int yItem = (int) ( yContent + ( numBlocks * heightIncrement ) ) - yContentOffset;
+				int height = (int) ( heightIncrement * ( item.timeEnd() / minutes / block ) );
+				h += height;
 				
 //				ChargeTime ct = new ChargeTime( item.timeStart() );
 //				ct.print();
 //				System.out.println( yItem );
 				
-				fillRect(g2, new Rectangle(xBlock, yItem, widthIncrement, heightIncrement), Color.BLUE);
+				fillRect(g2, new Rectangle(xBlock+xContentOffset, yItem, widthIncrement, height), item.color);
 			}
+			
+			// draw name of chargePoint at top of column
+			String name = "";
+			if ( tlBlock.chargePoint != null )
+				name += String.format( "%1.0f", tlBlock.chargePoint.getChargeRate() );
+			else
+				name += "n";
+			fillRect(g2, new Rectangle(xBlock+xContentOffset, yContent, widthIncrement, -heightIncrement), Color.WHITE);
+			drawString(g2, name, xBlock+xContentOffset, yContent, Color.BLACK);
 			
 			// go to next column
 			xBlock += widthIncrement;
@@ -216,13 +311,31 @@ public class CanvasTabTimeLine extends CanvasTab
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e)
 			{
-				if ( e.getWheelRotation() >= 1 )
+				int scrollAmount = 10;
+				if ( e.isShiftDown() )
+					scrollAmount *= 3;
+				
+				if ( e.isControlDown() )
 				{
-					offsetVal--;
+					if ( e.getWheelRotation() >= 1 )
+					{
+						xContentOffset -= scrollAmount;
+					}
+					else if ( e.getWheelRotation() <= -1 )
+					{
+						xContentOffset += scrollAmount;
+					}
 				}
-				else if ( e.getWheelRotation() <= -1 )
+				else
 				{
-					offsetVal++;
+					if ( e.getWheelRotation() >= 1 )
+					{
+						yContentOffset -= scrollAmount;
+					}
+					else if ( e.getWheelRotation() <= -1 )
+					{
+						yContentOffset += scrollAmount;
+					}
 				}
 			}
 		};
@@ -245,7 +358,55 @@ public class CanvasTabTimeLine extends CanvasTab
 			public void mouseEntered(MouseEvent e) {}
 			
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
+			{
+				
+				// click in block
+				
+				// a list for each chargePoint and all of the Queue items that go to it
+				ArrayList<TimeLineBlock> tlBlocks = makeblocks();
+				
+				int xBlock = xContent;
+				
+				// draw each block as a row, each item is a column
+				// order/time/length of time don't matter yet
+				for ( int i = 0; i < tlBlocks.size(); i++ )
+				{
+					// current Time Line block
+					TimeLineBlock tlBlock = tlBlocks.get(i);
+					
+					// draw blocks
+					int h = 0;
+					for ( int j = 0; j < tlBlock.items.size(); j++ )
+					{
+						// current item in block
+						QueueItem item = tlBlock.items.get(j);
+						
+						if ( item == null )
+							continue;
+						
+						int minutes = 60;
+						
+						int numBlocks = (int) ( item.timeStart() / minutes / block ) ;
+						int yItem = (int) ( yContent + ( numBlocks * heightIncrement ) ) - yContentOffset;
+						int height = (int) ( heightIncrement * ( item.timeEnd() / minutes / block ) );
+						h += height;
+						
+						Rectangle rect = new Rectangle(xBlock+xContentOffset, yItem, widthIncrement, height);
+						
+						if ( rect.contains( e.getPoint() ) )
+						{
+							System.out.println( "QueueItem Car: " + item.getCar().getID() + ", ChargePoint: " + item.getChargePoint().getChargeRate() + ", start time: " + item.timeStart() + ", duration: " + item.timeEnd() );
+						}
+						
+					}
+					
+					// go to next column
+					xBlock += widthIncrement;
+				}
+				
+				
+			}
 		};
 	}
 	
@@ -257,9 +418,7 @@ public class CanvasTabTimeLine extends CanvasTab
 			public void mouseMoved(MouseEvent e) {}
 			
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				offsetVal++;
-			}
+			public void mouseDragged(MouseEvent e) {}
 		};
 	}
 }

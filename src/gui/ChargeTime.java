@@ -69,6 +69,10 @@ public class ChargeTime
 			m = m + 60;
 		}
 		
+		while ( h >= 24 )
+		{
+			h -= 24;
+		}
 		
 		long[] r = { h, m };
 		return r;

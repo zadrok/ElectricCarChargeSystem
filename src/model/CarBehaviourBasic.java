@@ -12,13 +12,14 @@ import boot.GlobalVariables;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import model.Car.STATE;
 
 @SuppressWarnings("serial")
 public class CarBehaviourBasic extends CyclicBehaviour
 {
 	private Car car;
 	private long lastDischarge;
+	private int numTimesResentWantCharge;
+	private int maxTimesToResendWantCharge;
 	
 	// Constructor for behaviour
 	public CarBehaviourBasic( Car aCar )
@@ -26,6 +27,9 @@ public class CarBehaviourBasic extends CyclicBehaviour
 		car = aCar;
 		// We use a current timestamp for last discharge
 		lastDischarge = System.currentTimeMillis();
+		
+		numTimesResentWantCharge = 0;
+		maxTimesToResendWantCharge = 5;
 	}
 
 	@Override
@@ -38,40 +42,30 @@ public class CarBehaviourBasic extends CyclicBehaviour
 		if ( msg != null )
 		{
 			// Handle message
-			System.out.println( car.getLocalName() + ": Received message " + msg.getContent() + " from " + msg.getSender().getLocalName() );
+//			System.out.println( car.getLocalName() + ": Received message " + msg.getContent() + " from " + msg.getSender().getLocalName() );
 			
 			// Reply to message
 			if ( msg.getContent().startsWith( "wantCharge" ) )
 			{
-				if ( msg.getContent().contains( "ok" ) )
+				if ( numTimesResentWantCharge >= maxTimesToResendWantCharge )
 				{
-					// If the car wants to charge, start waiting for charge
-					if ( car.isWantCharge() )
-					{
-						car.setWantCharge(false);
-						car.setWaitingForCharge(true);
-						System.out.println( car.getLocalName() + " is waiting for charge" );
-					}
+					try { Thread.sleep( 60 * 1000 ); } catch (InterruptedException e) { }
+					numTimesResentWantCharge = 0;
 				}
-				else
-				{
-					
-				}
-			}
-			else if(msg.getContent().startsWith("mayCharge"))
-			{
 				
+				wantCharge(msg);
 			}
 		}
 		
 		// If the car wants to charge or has the state of CHARGE
-		if ( car.isWantCharge() || car.getCarState() == STATE.CHARGE )
+		if ( car.isWantCharge() ) // || car.getCarState() == STATE.CHARGE
 		{
 			// Create a charge request
 			ACLMessage newMSG = new ACLMessage( ACLMessage.INFORM );
-			// Time is in the format HH:MM from NOW and HH:MM duration from start time
+			// Time is in the format Long and Long duration from start time
 			// For this purpose of simulation, time is 60x quicker (minute -> second, hour -> minute
-			newMSG.setContent( "wantCharge --time 00:00 01:00" );
+			String[] time = car.getChargeTimes();
+			newMSG.setContent( "wantCharge --time " + time[0] + " " + time[1] );
 			newMSG.addReceiver( new AID( "Master Scheduler", AID.ISLOCALNAME ) );
 			car.send( newMSG );
 		}
@@ -83,6 +77,43 @@ public class CarBehaviourBasic extends CyclicBehaviour
 		{
 			lastDischarge = System.currentTimeMillis() + pollDelay;
 			car.discharge();
+		}
+	}
+	
+	private void wantCharge(ACLMessage msg)
+	{
+		if ( msg.getContent().contains( "ok" ) )
+		{
+			car.setWantCharge(false);
+			car.setWaitingForCharge(true);
+			System.out.println( car.getLocalName() + " is waiting for charge" );
+			numTimesResentWantCharge = 0;
+		}
+		else if ( msg.getContent().contains( "alreadyInQueue" ) )
+		{
+			car.setWantCharge(false);
+			car.setWaitingForCharge(true);
+			numTimesResentWantCharge = 0;
+		}
+		else if ( msg.getContent().contains( "resend" ) )
+		{
+			car.setWantCharge(true);
+			car.setWaitingForCharge(false);
+			numTimesResentWantCharge += 1;
+		}
+		else if ( msg.getContent().contains( "couldNotFindTime" ) )
+		{
+			car.setWantCharge(true);
+			car.setWaitingForCharge(false);
+			numTimesResentWantCharge += 1;
+			// TODO - find different time or try again with same time later
+		}
+		else
+		{
+			System.out.println( car.getLocalName() + " didn't recognise reply" );
+			car.setWantCharge(true);
+			car.setWaitingForCharge(false);
+			numTimesResentWantCharge += 1;
 		}
 	}
 

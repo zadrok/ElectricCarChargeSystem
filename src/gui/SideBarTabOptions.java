@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import boot.GlobalVariables;
 
@@ -31,6 +33,11 @@ public class SideBarTabOptions extends SideBarTab
 	private JButton createNewChargePointLarge;
 	private JButton createNewChargePointCustom;
 	private ActionListener createNewChargePointActionListener;
+	
+	private JButton add30Minutes;
+	
+	private JSlider timeScaleSlider;
+	private JLabel timeScaleSliderLabel;
 	
 	public SideBarTabOptions(SideBar aSideBar)
 	{
@@ -105,6 +112,22 @@ public class SideBarTabOptions extends SideBarTab
 		createNewChargePointCustom.setBounds(rightMargin, yOffset, bttnWidth, height);
 		createNewChargePointCustom.addActionListener( createNewChargePointActionListener );
 		
+		yOffset += yOffsetIncrement;
+		yOffset += yOffsetIncrement;
+		add30Minutes = new JButton("+30 minutes");
+		add30Minutes.setBounds(rightMargin, yOffset, bttnWidth, height);
+		add30Minutes.addActionListener( new ActionListener() { public void actionPerformed(ActionEvent e) { GlobalVariables.runTime += 30*60; } } );
+		
+		yOffset += yOffsetIncrement;
+		yOffset += yOffsetIncrement;
+		timeScaleSliderLabel = new JLabel("Time Scale 1 - 10 (agents don't run faster just system clock)");
+		timeScaleSliderLabel.setBounds(rightMargin, yOffset, bttnWidth+20, height);
+		
+		yOffset += yOffsetIncrement;
+		timeScaleSlider = new JSlider(1,10,1);
+		timeScaleSlider.setBounds(rightMargin, yOffset, bttnWidth, height);
+		timeScaleSlider.addChangeListener( new ChangeListener() { public void stateChanged(ChangeEvent e) { GlobalVariables.timeScale = GlobalVariables.timeScaleBase * ((JSlider)e.getSource()).getValue(); } } );
+		
 		
 		add(drawLoop);
 		add(createNewCarSmall);
@@ -115,6 +138,10 @@ public class SideBarTabOptions extends SideBarTab
 		add(createNewChargePointMedium);
 		add(createNewChargePointLarge);
 		add(createNewChargePointCustom);
+		
+		add(add30Minutes);
+		add(timeScaleSliderLabel);
+		add(timeScaleSlider);
 	}
 	
 	private void initActionListeners()
