@@ -30,7 +30,8 @@ public class GlobalVariables
 	public static int chargePointChargeRateSizeLarge;
 	
 	public static double timeScale;
-	public static double timeScaleBase;
+	public static double clockTimeScale;
+	public static double clockTimeScaleBase;
 	
 	public static String masterSchedulerAlgorithm;
 	
@@ -63,7 +64,8 @@ public class GlobalVariables
 		chargePointChargeRateSizeLarge = obj.get("chargePointChargeRateSizeLarge").getAsInt();
 		
 		timeScale = obj.get("timeScale").getAsInt();
-		timeScaleBase = obj.get("timeScale").getAsInt();
+		clockTimeScale = obj.get("timeScale").getAsInt();
+		clockTimeScaleBase = obj.get("timeScale").getAsInt();
 		
 		masterSchedulerAlgorithm = obj.get("masterSchedulerAlgorithm").getAsString();
 		

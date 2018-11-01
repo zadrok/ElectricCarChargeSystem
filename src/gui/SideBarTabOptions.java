@@ -126,7 +126,11 @@ public class SideBarTabOptions extends SideBarTab
 		yOffset += yOffsetIncrement;
 		timeScaleSlider = new JSlider(1,10,1);
 		timeScaleSlider.setBounds(rightMargin, yOffset, bttnWidth, height);
-		timeScaleSlider.addChangeListener( new ChangeListener() { public void stateChanged(ChangeEvent e) { GlobalVariables.timeScale = GlobalVariables.timeScaleBase * ((JSlider)e.getSource()).getValue(); } } );
+		timeScaleSlider.addChangeListener( new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				GlobalVariables.clockTimeScale = GlobalVariables.clockTimeScaleBase * ((JSlider)e.getSource()).getValue();
+				}
+			} );
 		
 		
 		add(drawLoop);

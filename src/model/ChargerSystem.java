@@ -380,6 +380,12 @@ public class ChargerSystem
 				if ( item == null )
 				{
 //					System.out.println( "item == null" );
+					
+					// if there is a car on this point remove it
+					if ( point.getCar() != null )
+						point.disconnectCar();
+					
+					
 					continue;
 				}
 				if ( point == null )
